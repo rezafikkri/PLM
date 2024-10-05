@@ -1,6 +1,6 @@
 <?php
 
-namespace RezaFikkri\MVC\App;
+namespace RezaFikkri\PLM\App;
 
 class View
 {

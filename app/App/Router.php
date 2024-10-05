@@ -1,9 +1,9 @@
 <?php
 
-namespace RezaFikkri\MVC\App;
+namespace RezaFikkri\PLM\App;
 
 use Exception;
-use RezaFikkri\MVC\Middleware\Middleware;
+use RezaFikkri\PLM\Middleware\Middleware;
 
 class Router
 {

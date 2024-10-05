@@ -1,6 +1,6 @@
 <?php
 
-namespace RezaFikkri\MVC\Controller;
+namespace RezaFikkri\PLM\Controller;
 
 class ProductController
 {

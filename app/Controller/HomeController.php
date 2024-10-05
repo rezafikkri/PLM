@@ -1,8 +1,8 @@
 <?php
 
-namespace RezaFikkri\MVC\Controller;
+namespace RezaFikkri\PLM\Controller;
 
-use RezaFikkri\MVC\App\View;
+use RezaFikkri\PLM\App\View;
 
 class HomeController
 {
