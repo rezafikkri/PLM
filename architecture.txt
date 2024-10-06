@@ -1,0 +1,36 @@
+@startuml
+
+actor "User" as user
+
+node "PHP Login Management" {
+  node "Model" as model
+  note bottom
+    ini adalah model
+    untuk data request
+  end note
+
+  node "Entity" as entity
+  note bottom
+    ini adalah model
+    representasi table
+    di database
+  end note
+  
+  node "Controller" as controller
+  node "View" as view
+  node "Service" as service
+  node "Repository" as repository
+}
+
+database "PostgreSQL" as postgres
+
+user --> controller : 1
+controller --> model : 2
+controller --> service : 3
+service --> repository : 4
+repository --> entity : 5
+repository --> postgres : 6
+controller --> view : 7
+controller --> user : 8
+
+@enduml

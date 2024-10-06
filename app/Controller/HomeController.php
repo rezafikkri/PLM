@@ -10,27 +10,8 @@ class HomeController
     {
         // model response
         $response = [
-            'title' => 'Belajar PHP MVC',
-            'content' => 'Selamat Belajar PHP MVC',
+            'title' => 'PHP Login Management System',
         ];
         View::render('Home/index', $response);
-    }
-
-    public function hello(): void
-    {
-        echo 'HomeController->hello()';
-    }
-
-    public function login(): void
-    {
-        // model request
-        $request = [
-            'username' => htmlspecialchars($_POST['username']),
-            'password' => htmlspecialchars($_POST['password']),
-        ];
-
-        $response = [
-            'message' => 'Login success',
-        ];
     }
 }
