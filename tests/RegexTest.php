@@ -15,8 +15,5 @@ class RegexTest extends TestCase
         $result = preg_match($pattern, $path, $variables);
 
         $this->assertEquals(1, $result);
-
-        array_shift($variables);
-        var_dump($variables);
     }
 }
