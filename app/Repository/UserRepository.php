@@ -28,4 +28,30 @@ class UserRepository
         $user->setId($id);
         return $user;
     }
+
+    public function findById(int $id): ?User
+    {
+        $stmt = $this->dbc->prepare('SELECT id, username, password FROM users WHERE id = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute(); 
+
+        try {
+            if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $user = new User;
+                $user->setId($userDb['id']);
+                $user->setUsername($userDb['username']);
+                $user->setPassword($userDb['password']);
+                return $user;
+            }
+            return null;
+        } finally {
+            $stmt->closeCursor();
+        }
+    }
+
+
+    public function deleteAll(): bool
+    {
+        return $this->dbc->exec('DELETE FROM users');
+    }
 }
