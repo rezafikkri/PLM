@@ -5,8 +5,12 @@ body {
 }
 
 .form-signin {
-  max-width: 330px;
+  max-width: 370px;
   padding: 1rem;
+}
+
+.form-signin h1 + p {
+  font-size: 1.15rem;
 }
 
 .form-signin .form-floating:focus-within {
@@ -23,6 +27,11 @@ body {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.form-signin a.btn {
+  padding-top: .7rem;
+  padding-bottom: .7rem;
 }
 
 .fs-7 {
