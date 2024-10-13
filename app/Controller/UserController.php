@@ -36,7 +36,9 @@ class UserController
         try {
             $this->userService->register($userRegisterRequest);
             header('Location: /login');
-            exit();
+            if ($_ENV['APP_ENV'] != 'development') {
+                exit();
+            }
         } catch (ValidationException $e) {
             View::render('User/register', [
                 'title' => 'Register User',

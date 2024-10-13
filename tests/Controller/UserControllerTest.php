@@ -2,21 +2,27 @@
 
 namespace RezaFikkri\PLM\Controller;
 
+function header(string $value) {
+    echo $value;
+}
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
+use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Repository\UserRepository;
 
 class UserControllerTest extends TestCase
 {
     private UserController $controller;
+    private UserRepository $userRepository;
 
     public function setUp(): void
     {
         $this->controller = new UserController;
 
-        $userRepository = new UserRepository(Database::getConnection());
-        $userRepository->deleteAll();
+        $this->userRepository = new UserRepository(Database::getConnection());
+        $this->userRepository->deleteAll();
     }
 
     #[Test]
@@ -31,23 +37,36 @@ class UserControllerTest extends TestCase
     #[Test]
     public function postRegisterSuccess(): void
     {
-        $this->markTestIncomplete();
+        $_POST['username'] = 'rezafikkri';
+        $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
+        $this->controller->postRegister();
+
+        $this->expectOutputString('Location: /login');
     }
 
     #[Test]
     public function postRegisterValidationError(): void
     {
-        $_POST['username'] = 're';
-        $_POST['password'] = 'password';
+        $_POST['username'] = '';
+        $_POST['password'] = '';
 
         $this->controller->postRegister();
 
-        $this->expectOutputRegex('#(?=.*Register)(?=.*Username)(?=.*Password)(?=.*Register User)#s');
+        $this->expectOutputRegex('#(?=.*Register)(?=.*Username)(?=.*Password)(?=.*Register User)(?=.*Username should not be blank\.)#s');
     }
 
     #[Test]
     public function postRegisterDuplicate(): void
     {
-        $this->markTestIncomplete();
+        $user = new User;
+        $user->setUsername('rezafikkri');
+        $user->setPassword('password');
+        $this->userRepository->save($user);
+
+        $_POST['username'] = 'rezafikkri';
+        $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
+        $this->controller->postRegister();
+
+        $this->expectOutputRegex('#(?=.*Register)(?=.*Username)(?=.*Password)(?=.*Register User)(?=.*Username already exist\. Please choose another username\.)#s');
     }
 }
