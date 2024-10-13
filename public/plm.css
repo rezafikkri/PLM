@@ -4,38 +4,56 @@ body {
   font-family: "Inter", sans-serif;
 }
 
-.form-signin {
+.form-plm {
   max-width: 370px;
   padding: 1rem;
 }
 
-.form-signin h1 + p {
-  font-size: 1.15rem;
+.form-plm h1 + p {
+  font-size: 1.21rem;
 }
 
-.form-signin .form-floating:focus-within {
+.form-plm .form-floating .form-control:focus + label,
+.form-plm .form-floating .form-control:not(:placeholder-shown) + label {
+  transform: scale(.85) translateY(-.3rem) translateX(.15rem);
+}
+
+.form-plm .form-floating .form-control + label {
+  font-size: 1.25rem;
+  padding: 1rem;
+  transform: translateY(.2rem);
+}
+
+.form-plm .form-floating .form-control {
+  padding: 1rem;
+  height: 4.4rem;
+}
+
+.form-plm .form-floating .form-control:focus,
+.form-plm .form-floating .form-control:not(:placeholder-shown) {
+  padding-top: 1.625rem;
+  padding-bottom: .3rem;
+}
+
+.form-plm .form-floating:focus-within {
   z-index: 2;
 }
 
-.form-signin input[type="text"] {
+.form-plm input[type="text"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-signin input[type="password"] {
+.form-plm input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
-.form-signin a.btn {
+.form-plm a.btn {
   padding-top: .7rem;
   padding-bottom: .7rem;
-}
-
-.fs-7 {
-  font-size: 0.9rem;
 }
 
 .mt-6 {
@@ -44,4 +62,14 @@ body {
 
 .mb-2\.5 {
   margin-bottom: .6rem;
+}
+
+.alert-fixed {
+  width: 400px;
+  top: 20px;
+  right: 20px;
+}
+
+.form-plm .btn-outline-secondary {
+  font-size: 1.1rem;
 }

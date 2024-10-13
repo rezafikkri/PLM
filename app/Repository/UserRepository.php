@@ -54,4 +54,25 @@ class UserRepository
     {
         return $this->dbc->exec('DELETE FROM users');
     }
+
+    public function findByUsername(string $username): ?User
+    {
+        $stmt = $this->dbc->prepare('SELECT id, username, password FROM users WHERE username = :username');
+        $stmt->bindValue(':username', $username);
+        $stmt->execute(); 
+
+        try {
+            if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $user = new User;
+                $user->setId($userDb['id']);
+                $user->setUsername($userDb['username']);
+                $user->setPassword($userDb['password']);
+                return $user;
+            }
+            return null;
+        } finally {
+            $stmt->closeCursor();
+        }
+
+    }
 }
