@@ -23,7 +23,11 @@
   "autoload": {
     "psr-4": {
       "RezaFikkri\\PLM\\": "app"
-    }
+    },
+    "files": [
+      "app/Helper/redirect_helper.php",
+      "app/Helper/session_helper.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {

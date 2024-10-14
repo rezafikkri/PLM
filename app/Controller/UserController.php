@@ -22,9 +22,16 @@ class UserController
 
     public function register(): void
     {
-        View::render('User/register', [
+        $model = [
             'title' => 'Register User',
-        ]);
+        ];
+
+        $session = session();
+        if ($errors = $session->getFlashData('errors')) {
+            $model['errors'] = $errors;
+        }
+
+        View::render('User/register', $model);
     }
 
     public function postRegister(): void
@@ -35,15 +42,10 @@ class UserController
 
         try {
             $this->userService->register($userRegisterRequest);
-            header('Location: /login');
-            if ($_ENV['APP_ENV'] != 'development') {
-                exit();
-            }
+            redirect()->to('/login');
         } catch (ValidationException $e) {
-            View::render('User/register', [
-                'title' => 'Register User',
-                'errors' => $e->getMessages(),
-            ]);
+            session()->setFlashData('errors', $e->getMessages());
+            redirect()->withInput()->to('/register');
         }
     }
 }

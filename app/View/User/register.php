@@ -15,7 +15,7 @@
 
     <form method="post" action="/register">
         <div class="form-floating">
-            <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" value="<?= $_POST['username'] ?? '' ?>" id="username">
+            <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" value="<?= old('username') ?? '' ?>" id="username">
             <label for="username">Username</label>
         </div>
         <div class="form-floating mb-3">
