@@ -6,6 +6,7 @@ use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\{UserRegisterRequest, UserRegisterResponse};
 use RezaFikkri\PLM\Repository\UserRepository;
+use RezaFikkri\PLM\Validator\IsUnique;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
@@ -46,14 +47,10 @@ class UserService
                 'min' => 4,
                 'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
             ]),
+            new IsUnique('users', 'username'),
         ]);
         if (count($userViolations) > 0) {
             $violations[] = $userViolations[0]->getMessage();
-        } else {
-            $user = $this->userRepository->findByUsername($request->getUsername());
-            if (!is_null($user)) {
-                $violations[] = 'Username already exist. Please choose another username.';
-            }
         }
 
         // validate password
