@@ -37,6 +37,7 @@ class UserService
     {
         // validate username
         $validator = Validation::createValidator();
+        $violations = [];
         $userViolations = $validator->validate($request->getUsername(), [
             new NotBlank([
                 'message' => 'Username should not be blank.'
@@ -47,12 +48,12 @@ class UserService
             ]),
         ]);
         if (count($userViolations) > 0) {
-            throw new ValidationException($userViolations[0]->getMessage());
-        }
-
-        $user = $this->userRepository->findByUsername($request->getUsername());
-        if (!is_null($user)) {
-            throw new ValidationException('Username already exist. Please choose another username.');
+            $violations[] = $userViolations[0]->getMessage();
+        } else {
+            $user = $this->userRepository->findByUsername($request->getUsername());
+            if (!is_null($user)) {
+                $violations[] = 'Username already exist. Please choose another username.';
+            }
         }
 
         // validate password
@@ -63,8 +64,11 @@ class UserService
             new PasswordStrength(),
         ]);
         if (count($passwordViolations) > 0) {
-            throw new ValidationException($passwordViolations[0]->getMessage());
+            $violations[] = $passwordViolations[0]->getMessage();
         }
 
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
     }
 }

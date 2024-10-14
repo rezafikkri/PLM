@@ -42,7 +42,7 @@ class UserController
         } catch (ValidationException $e) {
             View::render('User/register', [
                 'title' => 'Register User',
-                'error' => $e->getMessage(),
+                'errors' => $e->getMessages(),
             ]);
         }
     }

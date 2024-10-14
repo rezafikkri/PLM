@@ -2,12 +2,14 @@
     <h1 class="h2 mb-2 fw-bold">Register</h1>
     <p class="mb-4 text-body-secondary">Create your account</p>
 
-    <?php if (isset($error)) :  ?>
+    <?php if (isset($errors)) :  ?>
     <div class="position-fixed z-3 alert-fixed">
+        <?php foreach ($errors as $error) : ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <p class="m-0"><?= $error ?></p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        <?php endforeach; ?>
     </div>
     <?php endif; ?>
 
