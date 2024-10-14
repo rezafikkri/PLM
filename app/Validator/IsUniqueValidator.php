@@ -42,7 +42,7 @@ class IsUniqueValidator extends ConstraintValidator
         $resultDb = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (count($resultDb) > 0) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ field }}', $constraint->field)
+                ->setParameter('{{ field }}', ucfirst($constraint->field))
                 ->addViolation();
         }
     }
