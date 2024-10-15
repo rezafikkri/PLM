@@ -15,7 +15,7 @@ class UserServiceTest extends TestCase
     private UserService $userService;
     private UserRepository $userRepository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $dbc = Database::getConnection();
         $this->userRepository = new UserRepository($dbc);
