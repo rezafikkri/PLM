@@ -1,8 +1,10 @@
 <?php
 
 namespace RezaFikkri\PLM\Library {
-    function header(string $value) {
-        echo $value;
+    if (!function_exists(__NAMESPACE__ . '\header')) {
+        function header(string $value) {
+            echo $value;
+        }
     }
 };
 
@@ -34,6 +36,9 @@ namespace RezaFikkri\PLM\Controller {
             $this->userRepository->deleteAll();
             // clear sessions (flash, form)
             session()->clear();
+
+            // reset $_POST
+            $_POST = [];
         }
 
         #[Test]
@@ -64,7 +69,7 @@ namespace RezaFikkri\PLM\Controller {
             $this->controller->postRegister();
 
             $this->expectOutputString('Location: /register');
-            $this->assertNotNull($_SESSION['flash']['errors'] ?? null);
+            $this->assertNotNull($_SESSION['flash']['errors']);
             $this->assertEquals('Username should not be blank.', $_SESSION['flash']['errors'][0]);
             $this->assertEquals('Password should not be blank.', $_SESSION['flash']['errors'][1]);
         }
@@ -82,7 +87,7 @@ namespace RezaFikkri\PLM\Controller {
             $this->controller->postRegister();
 
             $this->expectOutputString('Location: /register');
-            $this->assertNotNull($_SESSION['flash']['errors'] ?? null);
+            $this->assertNotNull($_SESSION['flash']['errors']);
             $this->assertEquals('Username already exist. Please choose another Username.', $_SESSION['flash']['errors'][0]);
         }
     }
