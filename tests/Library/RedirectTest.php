@@ -54,6 +54,8 @@ class RedirectTest extends TestCase
     public function redirectWithInputWithoutFormData(): void
     {
         $this->redirect->withInput()->to('/logout');
+
+        $this->expectOutputString('Location: /logout');
         $this->assertNull($_SESSION['form']);
     }
 }
