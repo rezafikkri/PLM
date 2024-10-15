@@ -52,7 +52,7 @@ class IsUniqueValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate('rezafikkri', $this->isUniqueConstraint);
 
         $this->buildViolation($this->isUniqueConstraint->message)
-            ->setParameter('{{ field }}', $this->isUniqueConstraint->field)
+            ->setParameter('{{ field }}', ucfirst($this->isUniqueConstraint->field))
             ->assertRaised();
     }
 
