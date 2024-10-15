@@ -4,7 +4,7 @@ namespace RezaFikkri\PLM\Service;
 
 use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Exception\ValidationException;
-use RezaFikkri\PLM\Model\{UserRegisterRequest, UserRegisterResponse};
+use RezaFikkri\PLM\Model\{UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserRegisterResponse};
 use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Validator\IsUnique;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -58,6 +58,45 @@ class UserService
                     'message' => 'Password should not be blank.',
                 ]),
                 new PasswordStrength(),
+            ]),
+        ]);
+        $violations = $validator->validate($input, $constraint);
+
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+    }
+
+    public function login(UserLoginRequest $request): UserLoginResponse
+    {
+        $this->ValidateUserLoginRequest($request);
+
+        $user = $this->userRepository->findByUsername($request->getUsername());
+        if (is_null($user)) {
+            throw new ValidationException(['Username or password is wrong.']);
+        }
+
+        if (password_verify($request->getPassword(), $user->getPassword())) {
+            $response = new UserLoginResponse;
+            $response->setUser($user);
+            return $response;
+        }
+
+        throw new ValidationException(['Username or password is wrong.']);
+    }
+
+    private function ValidateUserLoginRequest(UserLoginRequest $request): void
+    {
+        // validate username
+        $validator = Validation::createValidator();
+
+        $input = $request->getIterator()->getArrayCopy();
+        $constraint = new Collection([
+            'username' => new NotBlank([
+                'message' => 'Username should not be blank.'
+            ]),
+            'password' => new NotBlank([
+                'message' => 'Password should not be blank.',
             ]),
         ]);
         $violations = $validator->validate($input, $constraint);
