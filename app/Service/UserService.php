@@ -7,6 +7,7 @@ use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\{UserRegisterRequest, UserRegisterResponse};
 use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Validator\IsUnique;
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
@@ -39,31 +40,27 @@ class UserService
     {
         // validate username
         $validator = Validation::createValidator();
-        $violations = []; 
-        $userViolations = $validator->validate($request->getUsername(), new Sequentially([
-            new NotBlank([
-                'message' => 'Username should not be blank.'
-            ]),
-            new Length([
-                'min' => 4,
-                'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
-            ]),
-            new IsUnique('users', 'username'),
-        ]));
-        if (count($userViolations) > 0) {
-            $violations[] = $userViolations[0]->getMessage();
-        }
 
-        // validate password
-        $passwordViolations = $validator->validate($request->getPassword(), new Sequentially([
-            new NotBlank([
-                'message' => 'Password should not be blank.',
+        $input = $request->getIterator()->getArrayCopy();
+        $constraint = new Collection([
+            'username' => new Sequentially([
+                new NotBlank([
+                    'message' => 'Username should not be blank.'
+                ]),
+                new Length([
+                    'min' => 4,
+                    'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
+                ]),
+                new IsUnique('users', 'username'),
             ]),
-            new PasswordStrength(),
-        ]));
-        if (count($passwordViolations) > 0) {
-            $violations[] = $passwordViolations[0]->getMessage();
-        }
+            'password' => new Sequentially([
+                new NotBlank([
+                    'message' => 'Password should not be blank.',
+                ]),
+                new PasswordStrength(),
+            ]),
+        ]);
+        $violations = $validator->validate($input, $constraint);
 
         if (count($violations) > 0) {
             throw new ValidationException($violations);

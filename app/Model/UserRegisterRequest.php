@@ -2,11 +2,23 @@
 
 namespace RezaFikkri\PLM\Model;
 
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+
 // Ini adalah model atau disebut juga DTO
-class UserRegisterRequest
+class UserRegisterRequest implements IteratorAggregate
 {
     private ?string $username = null;
     private ?string $password = null;
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator([
+            'username' => $this->username,
+            'password' => $this->password,
+        ]);
+    }
 
     // Getter and Setter for $username
     public function getUsername(): ?string {

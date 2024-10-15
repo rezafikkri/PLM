@@ -2,6 +2,8 @@
 
 namespace RezaFikkri\PLM\Library;
 
+use Symfony\Component\Validator\ConstraintViolationList;
+
 class Session
 {
     public function startSession(): void
@@ -11,9 +13,15 @@ class Session
         }
     }
 
-    public function setFlashData(string $key, array|string $value): void
+    public function setFlashData(string $key, iterable|string $value): void
     {
-        $_SESSION['flash'][$key] = $value;
+        if ($value instanceof ConstraintViolationList) {
+            foreach ($value as $v) {
+                $_SESSION['flash'][$key][] = $v->getMessage();
+            }
+        } else {
+            $_SESSION['flash'][$key] = $value;
+        }
     }
 
     public function getFlashData(string $key): array|string|null
