@@ -4,6 +4,8 @@ namespace RezaFikkri\PLM\Library;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class SessionTest extends TestCase
 {
@@ -25,6 +27,27 @@ class SessionTest extends TestCase
     {
         $this->session->setFlashData('email', 'rezafikkri@gmail.com');
         $this->assertEquals('rezafikkri@gmail.com', $_SESSION['flash']['email']);
+    }
+
+    #[Test]
+    public function setFlashDataWithIterableValue(): void
+    {
+        $violations = new ConstraintViolationList([
+            new ConstraintViolation(
+                message: 'Username cannot be blank.',
+                messageTemplate: null,
+                parameters: [],
+                root: '',
+                propertyPath: null,
+                invalidValue: '',
+            ),
+        ]);
+
+        $this->session->setFlashData('errors', $violations);
+
+        $this->assertIsArray($_SESSION['flash']['errors']);
+        $this->assertContainsOnly('string', $_SESSION['flash']['errors']);
+        $this->assertContains('Username cannot be blank.', $_SESSION['flash']['errors']);
     }
 
     #[Test]
