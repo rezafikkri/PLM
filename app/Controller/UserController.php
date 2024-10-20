@@ -5,6 +5,7 @@ namespace RezaFikkri\PLM\Controller;
 use RezaFikkri\PLM\App\View;
 use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Exception\ValidationException;
+use RezaFikkri\PLM\Model\UserLoginRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
 use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Service\UserService;
@@ -36,16 +37,46 @@ class UserController
 
     public function postRegister(): void
     {
-        $userRegisterRequest = new UserRegisterRequest;
-        $userRegisterRequest->setUsername($_POST['username']);
-        $userRegisterRequest->setPassword($_POST['password']);
+        $request = new UserRegisterRequest;
+        $request->setUsername($_POST['username']);
+        $request->setPassword($_POST['password']);
 
         try {
-            $this->userService->register($userRegisterRequest);
-            redirect()->to('/login');
+            $this->userService->register($request);
+            redirect()->to('/users/login');
         } catch (ValidationException $e) {
             session()->setFlashData('errors', $e->getMessages());
-            redirect()->withInput()->to('/register');
+            redirect()->withInput()->to('/users/register');
+        }
+    }
+
+
+    public function login(): void
+    {
+        $model = [
+            'title' => 'Login User',
+        ];
+
+        $session = session();
+        if ($errors = $session->getFlashData('errors')) {
+            $model['errors'] = $errors;
+        }
+
+        View::render('User/login', $model);
+    }
+
+    public function postLogin(): void
+    {
+        $request = new UserLoginRequest;
+        $request->setUsername($_POST['username']);
+        $request->setPassword($_POST['password']);
+
+        try {
+            $this->userService->login($request);
+            redirect()->to('/');
+        } catch (ValidationException $e) {
+            session()->setFlashData('errors', $e->getMessages());
+            redirect()->withInput()->to('/users/login');
         }
     }
 }
