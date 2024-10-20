@@ -57,7 +57,7 @@ namespace RezaFikkri\PLM\Controller {
             $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
             $this->controller->postRegister();
 
-            $this->expectOutputString('Location: /login');
+            $this->expectOutputString('Location: /users/login');
         }
 
         #[Test]
@@ -68,7 +68,7 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postRegister();
 
-            $this->expectOutputString('Location: /register');
+            $this->expectOutputString('Location: /users/register');
             $this->assertNotNull($_SESSION['flash']['errors']);
             $this->assertEquals('Username should not be blank.', $_SESSION['flash']['errors'][0]);
             $this->assertEquals('Password should not be blank.', $_SESSION['flash']['errors'][1]);
@@ -86,9 +86,93 @@ namespace RezaFikkri\PLM\Controller {
             $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
             $this->controller->postRegister();
 
-            $this->expectOutputString('Location: /register');
+            $this->expectOutputString('Location: /users/register');
             $this->assertNotNull($_SESSION['flash']['errors']);
             $this->assertEquals('Username already exist. Please choose another Username.', $_SESSION['flash']['errors'][0]);
+        }
+
+        #[Test]
+        public function login(): void
+        {
+            $this->controller->login();
+
+            $this->expectOutputRegex('#(?=.*Login)(?=.*Username)(?=.*Password)(?=.*Login User)#s');
+        }
+
+        #[Test]
+        public function loginError(): void
+        {
+            session()->setFlashData('errors', [
+                'Username should not be blank.',
+                'Password should not be blank.',
+            ]);
+            $this->controller->login();
+
+            $this->expectOutputRegex('#(?=.*Username should not be blank.)(?=.*Password should not be blank.)#s');
+        }
+
+        #[Test]
+        public function postLoginSuccess(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword('password');
+
+            $_POST['username'] = $user->getUsername();
+            $_POST['password'] = $user->getPassword();
+
+            $user->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+
+            $this->controller->postLogin();
+
+            $this->expectOutputString('Location: /');
+        }
+
+
+        #[Test]
+        public function postLoginValidationError(): void
+        {
+            $_POST['username'] = '';
+            $_POST['password'] = '';
+
+            $this->controller->postLogin();
+
+            $this->expectOutputString('Location: /users/login');
+            $this->assertNotNull($_SESSION['flash']['errors']);
+            $this->assertContains('Username should not be blank.', $_SESSION['flash']['errors']);
+            $this->assertContains('Password should not be blank.', $_SESSION['flash']['errors']);
+        }
+
+        #[Test]
+        public function postLoginUsernameNotFound(): void
+        {
+            $_POST['username'] = 'RezaF';
+            $_POST['password'] = 'reza';
+
+            $this->controller->postLogin();
+
+            $this->expectOutputString('Location: /users/login');
+            $this->assertNotNull($_SESSION['flash']['errors']);
+            $this->assertContains('Username or password is wrong.', $_SESSION['flash']['errors']);
+        }
+
+        #[Test]
+        public function postLoginWrongPassword(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password123123', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+
+            $_POST['username'] = $user->getUsername();
+            $_POST['password'] = 'wrong';
+
+            $this->controller->postLogin();
+
+            $this->expectOutputString('Location: /users/login');
+            $this->assertNotNull($_SESSION['flash']['errors']);
+            $this->assertContains('Username or password is wrong.', $_SESSION['flash']['errors']);
         }
     }
 };

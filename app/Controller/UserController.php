@@ -50,7 +50,6 @@ class UserController
         }
     }
 
-
     public function login(): void
     {
         $model = [
