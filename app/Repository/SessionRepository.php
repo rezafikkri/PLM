@@ -16,7 +16,7 @@ class SessionRepository
     public function save(Session $session): Session
     {
         $stmt = $this->dbc->prepare('INSERT INTO sessions (id, user_id) VALUES (:id, :user_id)');
-        $stmt->execute([':id' => $session->getId(), ':user_id' => $session->getId()]);
+        $stmt->execute([':id' => $session->getId(), ':user_id' => $session->getUserId()]);
         return $session;
     }
 
