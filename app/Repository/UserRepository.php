@@ -35,11 +35,11 @@ class UserRepository
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute(); 
 
-        if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $user = new User;
-            $user->setId($userDb['id']);
-            $user->setUsername($userDb['username']);
-            $user->setPassword($userDb['password']);
+            $user->setId($row['id']);
+            $user->setUsername($row['username']);
+            $user->setPassword($row['password']);
             return $user;
         }
         return null;
@@ -59,11 +59,11 @@ class UserRepository
 
         // kita tidak menggunakan closeCursor karena username didatabase adalah unique, jadi data
         // yang di ambil dapat dipastikan hanya 1 data
-        if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $user = new User;
-            $user->setId($userDb['id']);
-            $user->setUsername($userDb['username']);
-            $user->setPassword($userDb['password']);
+            $user->setId($row['id']);
+            $user->setUsername($row['username']);
+            $user->setPassword($row['password']);
             return $user;
         }
         return null;
