@@ -35,18 +35,14 @@ class UserRepository
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute(); 
 
-        try {
-            if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $user = new User;
-                $user->setId($userDb['id']);
-                $user->setUsername($userDb['username']);
-                $user->setPassword($userDb['password']);
-                return $user;
-            }
-            return null;
-        } finally {
-            $stmt->closeCursor();
+        if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $user = new User;
+            $user->setId($userDb['id']);
+            $user->setUsername($userDb['username']);
+            $user->setPassword($userDb['password']);
+            return $user;
         }
+        return null;
     }
 
 
@@ -61,18 +57,15 @@ class UserRepository
         $stmt->bindValue(':username', $username);
         $stmt->execute(); 
 
-        try {
-            if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $user = new User;
-                $user->setId($userDb['id']);
-                $user->setUsername($userDb['username']);
-                $user->setPassword($userDb['password']);
-                return $user;
-            }
-            return null;
-        } finally {
-            $stmt->closeCursor();
+        // kita tidak menggunakan closeCursor karena username didatabase adalah unique, jadi data
+        // yang di ambil dapat dipastikan hanya 1 data
+        if ($userDb = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $user = new User;
+            $user->setId($userDb['id']);
+            $user->setUsername($userDb['username']);
+            $user->setPassword($userDb['password']);
+            return $user;
         }
-
+        return null;
     }
 }

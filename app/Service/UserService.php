@@ -63,6 +63,8 @@ class UserService
         $violations = $validator->validate($input, $constraint);
 
         if (count($violations) > 0) {
+            // mengapa melakukan throw? karena bagusnya, jika terjadi error, misalnya seperti
+            // ada validasi yang tidak lolos, maka sebaiknya kita melakukan throw Exception
             throw new ValidationException($violations);
         }
     }
