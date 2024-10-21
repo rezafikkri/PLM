@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Component\Validator\Constraints\Sequentially;
 use Symfony\Component\Validator\Validation;
 
+// biasanya function/method pada service dibuat sesuai api (Application Programming Interface)-nya
+// karena aplikasi ini kita buat dalam bentuk tampilan web
+// maka method service-nya adalah action-nya, ex. register.
 class UserService
 {
     public function __construct(
