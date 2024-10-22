@@ -33,7 +33,7 @@ class FlashTest extends TestCase
     {
         $this->flash->setFlashData('email', 'rezafikkri@gmail.com');
         $this->expectOutputString(
-            $this->flash->getFlashName('email') . ": " . json_encode('rezafikkri@gmail.com')
+            $this->flash->getName('email') . ": " . json_encode('rezafikkri@gmail.com')
         );
     }
 
@@ -58,14 +58,14 @@ class FlashTest extends TestCase
             $violations->getIterator()->getArrayCopy(),
         );
         $this->expectOutputString(
-            $this->flash->getFlashName('errors')  . ": " . json_encode($errors)
+            $this->flash->getName('errors')  . ": " . json_encode($errors)
         );
     }
 
     #[Test]
     public function getFlashData(): void
     {
-        $_COOKIE[$this->flash->getFlashName('email')] = json_encode('adelina@gmail.com');
+        $_COOKIE[$this->flash->getName('email')] = json_encode('adelina@gmail.com');
 
         $data = $this->flash->getFlashData('email');
         $this->assertEquals('adelina@gmail.com', $data);
@@ -83,7 +83,7 @@ class FlashTest extends TestCase
     {
         $this->flash->clear();
         $this->expectOutputString(
-            $this->flash->getFlashName('form') . ': ' . $this->flash->getFlashName('errors') . ': '
+            $this->flash->getName('form') . ': ' . $this->flash->getName('errors') . ': '
         );
     }
 }

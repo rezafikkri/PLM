@@ -14,7 +14,7 @@ class Flash
         return time() + 60 * 30;
     }
 
-    public function getFlashName(string $key): string
+    public function getName(string $key): string
     {
         return self::NAME . '_' . $key;
     }
@@ -27,14 +27,14 @@ class Flash
                 $value->getIterator()->getArrayCopy(),
             );
             setcookie(
-                $this->getFlashName($key),
+                $this->getName($key),
                 json_encode($cookieValues),
                 $this->getExpire(),
                 self::PATH,
             );
         } else {
             setcookie(
-                $this->getFlashName($key),
+                $this->getName($key),
                 json_encode($value),
                 $this->getExpire(),
                 self::PATH,
@@ -44,14 +44,14 @@ class Flash
 
     public function getFlashData(string $key): array|string|null
     {
-        return json_decode($_COOKIE[$this->getFlashName($key)] ?? "", true);
+        return json_decode($_COOKIE[$this->getName($key)] ?? "", true);
     }
 
     public function clear(): void
     {
         $flashes = ['form','errors'];
         foreach ($flashes as $flash) {
-            setcookie($this->getFlashName($flash), expires_or_options: 1, path: self::PATH);
+            setcookie($this->getName($flash), expires_or_options: 1, path: self::PATH);
         }
     }
 }

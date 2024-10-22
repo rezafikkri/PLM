@@ -65,7 +65,7 @@ namespace RezaFikkri\PLM\Controller {
         public function registerError(): void
         {
             $errors = ['Username should not be blank.'];
-            $_COOKIE[$this->flash->getFlashName('errors')] = json_encode($errors);
+            $_COOKIE[$this->flash->getName('errors')] = json_encode($errors);
 
             $this->controller->register();
 
@@ -92,11 +92,11 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postRegister();
 
-            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
                 'Username should not be blank.',
                 'Password should not be blank.',
             ]);
-            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+            $form = $this->flash->getName('form') . ': ' . json_encode([
                 'username' => '',
             ]);
             $this->expectOutputString(
@@ -116,10 +116,10 @@ namespace RezaFikkri\PLM\Controller {
             $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
             $this->controller->postRegister();
 
-            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
                 'Username already exist. Please choose another Username.',
             ]);
-            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+            $form = $this->flash->getName('form') . ': ' . json_encode([
                 'username' => $_POST['username'],
             ]);
             $this->expectOutputString(
@@ -139,7 +139,7 @@ namespace RezaFikkri\PLM\Controller {
         public function loginError(): void
         {
             $errors = ['Username should not be blank.'];
-            $_COOKIE[$this->flash->getFlashName('errors')] = json_encode($errors);
+            $_COOKIE[$this->flash->getName('errors')] = json_encode($errors);
 
             $this->controller->login();
 
@@ -172,11 +172,11 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
                 'Username should not be blank.',
                 'Password should not be blank.',
             ]);
-            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+            $form = $this->flash->getName('form') . ': ' . json_encode([
                 'username' => '',
             ]);
 
@@ -193,10 +193,10 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
                 'Username or password is wrong.',
             ]);
-            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+            $form = $this->flash->getName('form') . ': ' . json_encode([
                 'username' => $_POST['username'],
             ]);
 
@@ -218,10 +218,10 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
                 'Username or password is wrong.',
             ]);
-            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+            $form = $this->flash->getName('form') . ': ' . json_encode([
                 'username' => $_POST['username'],
             ]);
 

@@ -26,7 +26,7 @@ class RedirectHelperTest extends TestCase
     #[Test]
     public function oldExist(): void
     {
-        $_COOKIE[$this->flash->getFlashName('form')] = json_encode(['username' => 'rezafikkriusername']);
+        $_COOKIE[$this->flash->getName('form')] = json_encode(['username' => 'rezafikkriusername']);
         $old = old('username');
         $this->assertEquals('rezafikkriusername', $old);
     }

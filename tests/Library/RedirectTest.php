@@ -53,7 +53,7 @@ class RedirectTest extends TestCase
         $this->redirect->withInput()->to('/login');
 
         $this->expectOutputString(
-            $this->flash->getFlashName('form') . ": " . json_encode([
+            $this->flash->getName('form') . ": " . json_encode([
                 'username' => $_POST['username']
             ]) . 'Location: /login');
     }
