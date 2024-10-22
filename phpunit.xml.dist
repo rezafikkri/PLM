@@ -24,10 +24,11 @@
 </source>
 
 <php>
-  <env name="DB_HOST" value="localhost"/>
-  <env name="DB_PORT" value="5432"/>
-  <env name="DB_NAME" value="php_login_management_test"/>
-  <env name="DB_USER" value="reza"/>
-  <env name="DB_PASSWORD" value="reza"/>
+  <env name="DB_HOST" value=""/>
+  <env name="DB_PORT" value=""/>
+  <env name="DB_NAME" value=""/>
+  <env name="DB_USER" value=""/>
+  <env name="DB_PASSWORD" value=""/>
+  <env name="SESSION_NAME" value=""/>
 </php>
 </phpunit>

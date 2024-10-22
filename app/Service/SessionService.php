@@ -17,11 +17,11 @@ class SessionService
 
     }
 
-    public function create(): Session
+    public function create(int $userId): Session
     {
         $session = new Session;
         $session->setId(uniqid());
-        $session->setUserId(12);
+        $session->setUserId($userId);
 
         $this->sessionRepository->save($session);
         setcookie($_ENV['SESSION_NAME'], $session->getId(), time() + (3600 * 24 * 2), '/');
@@ -35,6 +35,7 @@ class SessionService
         if ($this->sessionRepository->deleteById($sessionId)) {
             // delete session cookie
             setcookie($_ENV['SESSION_NAME'], expires_or_options: 1, path: '/');
+            return true;
         }
         return false;
     }

@@ -19,8 +19,12 @@ class SessionRepositoryTest extends TestCase
         $this->sessionRepository = new SessionRepository($dbc);
         $this->userRepository = new UserRepository($dbc);
 
-        $this->sessionRepository->deleteAll();// clear all session data before each test
         $this->userRepository->deleteAll();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->sessionRepository->deleteAll();// clear all session data before each test
     }
 
     #[Test]
