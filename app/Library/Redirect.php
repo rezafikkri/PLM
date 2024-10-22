@@ -24,7 +24,7 @@ class Redirect
     private function setOldForm(): void
     {
         if (count($_POST) > 0) {
-            $this->flash->setFlashData('form', array_filter(
+            $this->flash->setData('form', array_filter(
                 $_POST,
                 fn($k) => $k != 'password',
                 ARRAY_FILTER_USE_KEY,

@@ -28,17 +28,16 @@ class FlashTest extends TestCase
         $_COOKIE = [];
     }
 
-    #[Test]
-    public function setFlashData(): void
+    public function testSetData(): void
     {
-        $this->flash->setFlashData('email', 'rezafikkri@gmail.com');
+        $this->flash->setData('email', 'rezafikkri@gmail.com');
         $this->expectOutputString(
             $this->flash->getName('email') . ": " . json_encode('rezafikkri@gmail.com')
         );
     }
 
     #[Test]
-    public function setFlashDataWithIterableValue(): void
+    public function setDataWithIterableValue(): void
     {
         $violations = new ConstraintViolationList([
             new ConstraintViolation(
@@ -51,7 +50,7 @@ class FlashTest extends TestCase
             ),
         ]);
 
-        $this->flash->setFlashData('errors', $violations);
+        $this->flash->setData('errors', $violations);
 
         $errors = array_map(
             fn($cv) => $cv->getMessage(),

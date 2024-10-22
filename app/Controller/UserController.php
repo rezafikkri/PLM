@@ -45,7 +45,7 @@ class UserController
             $this->userService->register($request);
             redirect()->to('/users/login');
         } catch (ValidationException $e) {
-            flash()->setFlashData('errors', $e->getMessages());
+            flash()->setData('errors', $e->getMessages());
             redirect()->withInput()->to('/users/register');
         }
     }
@@ -74,7 +74,7 @@ class UserController
             $this->userService->login($request);
             redirect()->to('/');
         } catch (ValidationException $e) {
-            flash()->setFlashData('errors', $e->getMessages());
+            flash()->setData('errors', $e->getMessages());
             redirect()->withInput()->to('/users/login');
         }
     }

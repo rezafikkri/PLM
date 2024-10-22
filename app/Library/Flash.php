@@ -19,7 +19,7 @@ class Flash
         return self::NAME . '_' . $key;
     }
 
-    public function setFlashData(string $key, iterable|string $value): void
+    public function setData(string $key, iterable|string $value): void
     {
         if ($value instanceof ConstraintViolationList) {
             $cookieValues = array_map(
