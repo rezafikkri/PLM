@@ -27,8 +27,8 @@ class UserController
             'title' => 'Register User',
         ];
 
-        $session = session();
-        if ($errors = $session->getFlashData('errors')) {
+        $flash = flash();
+        if ($errors = $flash->getFlashData('errors')) {
             $model['errors'] = $errors;
         }
 
@@ -45,7 +45,7 @@ class UserController
             $this->userService->register($request);
             redirect()->to('/users/login');
         } catch (ValidationException $e) {
-            session()->setFlashData('errors', $e->getMessages());
+            flash()->setFlashData('errors', $e->getMessages());
             redirect()->withInput()->to('/users/register');
         }
     }
@@ -56,8 +56,8 @@ class UserController
             'title' => 'Login User',
         ];
 
-        $session = session();
-        if ($errors = $session->getFlashData('errors')) {
+        $flash = flash();
+        if ($errors = $flash->getFlashData('errors')) {
             $model['errors'] = $errors;
         }
 
@@ -74,7 +74,7 @@ class UserController
             $this->userService->login($request);
             redirect()->to('/');
         } catch (ValidationException $e) {
-            session()->setFlashData('errors', $e->getMessages());
+            flash()->setFlashData('errors', $e->getMessages());
             redirect()->withInput()->to('/users/login');
         }
     }

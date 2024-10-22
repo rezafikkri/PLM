@@ -5,6 +5,17 @@ namespace RezaFikkri\PLM\Library;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+if (!function_exists(__NAMESPACE__ . '\setcookie')) {
+    function setcookie(
+        string $name,
+        string $value = '',
+        int $expires_or_options = 0,
+        string $path = '',
+    ): void {
+        echo "$name: $value";
+    }
+}
+
 if (!function_exists(__NAMESPACE__ . '\header')) {
     function header(string $value) {
         echo $value;
@@ -14,20 +25,16 @@ if (!function_exists(__NAMESPACE__ . '\header')) {
 class RedirectTest extends TestCase
 {
     private Redirect $redirect;
-
-    public static function setUpBeforeClass(): void
-    {
-        session()->startSession();
-    }
+    private Flash $flash;
 
     protected function setUp(): void
     {
-        $this->redirect = new Redirect();
-        // clear session (flash, form)
-        session()->clear();
+        $this->flash = flash();
+        $this->redirect = new Redirect($this->flash);
 
         // reset $_POST
         $_POST = [];
+        $_COOKIE = [];
     }
 
     #[Test]
@@ -45,17 +52,16 @@ class RedirectTest extends TestCase
 
         $this->redirect->withInput()->to('/login');
 
-        $this->expectOutputString('Location: /login');
-        $this->assertEquals('rezafikkriusernametest', $_SESSION['form']['username']);
-        $this->assertNull($_SESSION['form']['password']);
+        $this->expectOutputString(
+            $this->flash->getFlashName('form') . ": " . json_encode([
+                'username' => $_POST['username']
+            ]) . 'Location: /login');
     }
 
     #[Test]
     public function redirectWithInputWithoutFormData(): void
     {
         $this->redirect->withInput()->to('/logout');
-
         $this->expectOutputString('Location: /logout');
-        $this->assertNull($_SESSION['form']);
     }
 }

@@ -7,6 +7,7 @@ class Redirect
     private bool $withInput = false;
 
     public function __construct(
+        private Flash $flash,
         private string $path = '/',
     ) {
         
@@ -22,10 +23,12 @@ class Redirect
 
     private function setOldForm(): void
     {
-        foreach ($_POST as $key => $value) {
-            if ($key != 'password') {
-                $_SESSION['form'][$key] = $value;
-            }
+        if (count($_POST) > 0) {
+            $this->flash->setFlashData('form', array_filter(
+                $_POST,
+                fn($k) => $k != 'password',
+                ARRAY_FILTER_USE_KEY,
+            ));
         }
     }
 

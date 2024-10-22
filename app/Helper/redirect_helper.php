@@ -4,10 +4,10 @@ use RezaFikkri\PLM\Library\Redirect;
 
 function redirect(): Redirect
 {
-    return new Redirect;
+    return new Redirect(flash());
 }
 
 function old(string $key): string
 {
-    return htmlspecialchars($_SESSION['form'][$key] ?? '');
+    return htmlspecialchars(flash()->getFlashData('form')[$key] ?? '');
 }

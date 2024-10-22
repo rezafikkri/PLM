@@ -2,19 +2,18 @@
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RezaFikkri\PLM\Library\Flash;
 use RezaFikkri\PLM\Library\Redirect;
 
 class RedirectHelperTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        session()->startSession();
-    }
+    private Flash $flash;
 
     protected function setUp(): void
     {
-        // clear session (flash, form)
-        session()->clear();
+        $this->flash = flash();
+
+        $_COOKIE = [];
     }
 
     #[Test]
@@ -27,7 +26,7 @@ class RedirectHelperTest extends TestCase
     #[Test]
     public function oldExist(): void
     {
-        $_SESSION['form']['username'] = 'rezafikkriusername';
+        $_COOKIE[$this->flash->getFlashName('form')] = json_encode(['username' => 'rezafikkriusername']);
         $old = old('username');
         $this->assertEquals('rezafikkriusername', $old);
     }

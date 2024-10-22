@@ -9,9 +9,6 @@ use RezaFikkri\PLM\Controller\{HomeController, UserController};
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-$session = session();
-$session->startSession();
-
 // Home Controller
 Router::add('GET', '/', HomeController::class, 'index');
 
@@ -24,4 +21,4 @@ Router::add('POST', '/users/login', UserController::class, 'postLogin');
 Router::run();
 
 // clear session (flash, form)
-$session->clear();
+// flash()->clear();

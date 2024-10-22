@@ -8,6 +8,20 @@ namespace RezaFikkri\PLM\Library {
     }
 };
 
+namespace RezaFikkri\PLM\Library {
+    if (!function_exists(__NAMESPACE__ . '\setcookie')) {
+        function setcookie(
+            string $name,
+            string $value = '',
+            int $expires_or_options = 0,
+            string $path = '',
+        ): void {
+            echo "$name: $value";
+        }
+    }
+};
+
+
 namespace RezaFikkri\PLM\Controller {
     use PHPUnit\Framework\Attributes\Test;
     use PHPUnit\Framework\TestCase;
@@ -16,29 +30,26 @@ namespace RezaFikkri\PLM\Controller {
         Entity\User,
         Repository\UserRepository,
     };
+    use RezaFikkri\PLM\Library\Flash;
 
     class UserControllerTest extends TestCase
     {
         private UserController $controller;
         private UserRepository $userRepository;
-
-        public static function setUpBeforeClass(): void
-        {
-            session()->startSession();
-        }
+        private Flash $flash;
 
         protected function setUp(): void
         {
             $this->controller = new UserController;
+            $this->flash = flash();
 
             // clear users
             $this->userRepository = new UserRepository(Database::getConnection());
             $this->userRepository->deleteAll();
-            // clear sessions (flash, form)
-            session()->clear();
 
-            // reset $_POST
+            // reset $_POST and $_COOKIE
             $_POST = [];
+            $_COOKIE = [];
         }
 
         #[Test]
@@ -48,6 +59,19 @@ namespace RezaFikkri\PLM\Controller {
 
             // using lookahead assertion
             $this->expectOutputRegex('#(?=.*Register)(?=.*Username)(?=.*Password)(?=.*Register User)#s');
+        }
+
+        #[Test]
+        public function registerError(): void
+        {
+            $errors = ['Username should not be blank.'];
+            $_COOKIE[$this->flash->getFlashName('errors')] = json_encode($errors);
+
+            $this->controller->register();
+
+            $this->expectOutputRegex(
+                "#(?=.*Register)(?=.*Username)(?=.*Password)(?=.*Register User)(?=.*$errors[0])#s"
+            );
         }
 
         #[Test]
@@ -68,10 +92,16 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postRegister();
 
-            $this->expectOutputString('Location: /users/register');
-            $this->assertNotNull($_SESSION['flash']['errors']);
-            $this->assertEquals('Username should not be blank.', $_SESSION['flash']['errors'][0]);
-            $this->assertEquals('Password should not be blank.', $_SESSION['flash']['errors'][1]);
+            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+                'Username should not be blank.',
+                'Password should not be blank.',
+            ]);
+            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+                'username' => '',
+            ]);
+            $this->expectOutputString(
+                $errors . $form . 'Location: /users/register'
+            );
         }
 
         #[Test]
@@ -86,9 +116,15 @@ namespace RezaFikkri\PLM\Controller {
             $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
             $this->controller->postRegister();
 
-            $this->expectOutputString('Location: /users/register');
-            $this->assertNotNull($_SESSION['flash']['errors']);
-            $this->assertEquals('Username already exist. Please choose another Username.', $_SESSION['flash']['errors'][0]);
+            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+                'Username already exist. Please choose another Username.',
+            ]);
+            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+                'username' => $_POST['username'],
+            ]);
+            $this->expectOutputString(
+                $errors . $form . 'Location: /users/register'
+            );
         }
 
         #[Test]
@@ -102,13 +138,12 @@ namespace RezaFikkri\PLM\Controller {
         #[Test]
         public function loginError(): void
         {
-            session()->setFlashData('errors', [
-                'Username should not be blank.',
-                'Password should not be blank.',
-            ]);
+            $errors = ['Username should not be blank.'];
+            $_COOKIE[$this->flash->getFlashName('errors')] = json_encode($errors);
+
             $this->controller->login();
 
-            $this->expectOutputRegex('#(?=.*Username should not be blank.)(?=.*Password should not be blank.)#s');
+            $this->expectOutputRegex('#(?=.*Username should not be blank.)#s');
         }
 
         #[Test]
@@ -129,7 +164,6 @@ namespace RezaFikkri\PLM\Controller {
             $this->expectOutputString('Location: /');
         }
 
-
         #[Test]
         public function postLoginValidationError(): void
         {
@@ -138,23 +172,37 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $this->expectOutputString('Location: /users/login');
-            $this->assertNotNull($_SESSION['flash']['errors']);
-            $this->assertContains('Username should not be blank.', $_SESSION['flash']['errors']);
-            $this->assertContains('Password should not be blank.', $_SESSION['flash']['errors']);
+            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+                'Username should not be blank.',
+                'Password should not be blank.',
+            ]);
+            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+                'username' => '',
+            ]);
+
+            $this->expectOutputString(
+                $errors . $form . 'Location: /users/login'
+            );
         }
 
         #[Test]
         public function postLoginUsernameNotFound(): void
         {
             $_POST['username'] = 'RezaF';
-            $_POST['password'] = 'reza';
+            $_POST['password'] = 'rezal';
 
             $this->controller->postLogin();
 
-            $this->expectOutputString('Location: /users/login');
-            $this->assertNotNull($_SESSION['flash']['errors']);
-            $this->assertContains('Username or password is wrong.', $_SESSION['flash']['errors']);
+            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+                'Username or password is wrong.',
+            ]);
+            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+                'username' => $_POST['username'],
+            ]);
+
+            $this->expectOutputString(
+                $errors . $form . 'Location: /users/login'
+            );
         }
 
         #[Test]
@@ -170,9 +218,16 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $this->expectOutputString('Location: /users/login');
-            $this->assertNotNull($_SESSION['flash']['errors']);
-            $this->assertContains('Username or password is wrong.', $_SESSION['flash']['errors']);
+            $errors = $this->flash->getFlashName('errors') . ': ' . json_encode([
+                'Username or password is wrong.',
+            ]);
+            $form = $this->flash->getFlashName('form') . ': ' . json_encode([
+                'username' => $_POST['username'],
+            ]);
+
+            $this->expectOutputString(
+                $errors . $form . 'Location: /users/login'
+            );
         }
     }
 };

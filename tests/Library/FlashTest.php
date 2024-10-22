@@ -7,13 +7,15 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-function setcookie(
-    string $name,
-    string $value = '',
-    int $expires_or_options = 0,
-    string $path = '',
-): void {
-    echo "$name: $value";
+if (!function_exists(__NAMESPACE__ . '\setcookie')) {
+    function setcookie(
+        string $name,
+        string $value = '',
+        int $expires_or_options = 0,
+        string $path = '',
+    ): void {
+        echo "$name: $value";
+    }
 }
 
 class FlashTest extends TestCase
@@ -22,7 +24,7 @@ class FlashTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->flash = new Flash;
+        $this->flash = flash();
         $_COOKIE = [];
     }
 
@@ -31,7 +33,7 @@ class FlashTest extends TestCase
     {
         $this->flash->setFlashData('email', 'rezafikkri@gmail.com');
         $this->expectOutputString(
-            Flash::NAME . ": " . json_encode(['email' => 'rezafikkri@gmail.com'])
+            $this->flash->getFlashName('email') . ": " . json_encode('rezafikkri@gmail.com')
         );
     }
 
@@ -51,15 +53,19 @@ class FlashTest extends TestCase
 
         $this->flash->setFlashData('errors', $violations);
 
+        $errors = array_map(
+            fn($cv) => $cv->getMessage(),
+            $violations->getIterator()->getArrayCopy(),
+        );
         $this->expectOutputString(
-            Flash::NAME . ": " . json_encode(['errors' => $violations->getIterator()->getArrayCopy()])
+            $this->flash->getFlashName('errors')  . ": " . json_encode($errors)
         );
     }
 
     #[Test]
     public function getFlashData(): void
     {
-        $_COOKIE[Flash::NAME] = json_encode(['email' => 'adelina@gmail.com']);
+        $_COOKIE[$this->flash->getFlashName('email')] = json_encode('adelina@gmail.com');
 
         $data = $this->flash->getFlashData('email');
         $this->assertEquals('adelina@gmail.com', $data);
@@ -76,6 +82,8 @@ class FlashTest extends TestCase
     public function clear(): void
     {
         $this->flash->clear();
-        $this->expectOutputString(Flash::NAME . ': ');
+        $this->expectOutputString(
+            $this->flash->getFlashName('form') . ': ' . $this->flash->getFlashName('errors') . ': '
+        );
     }
 }
