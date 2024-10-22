@@ -21,6 +21,19 @@ namespace RezaFikkri\PLM\Library {
     }
 };
 
+namespace RezaFikkri\PLM\Service {
+    if (!function_exists(__NAMESPACE__ . '\setcookie')) {
+        function setcookie(
+            string $name,
+            string $value = '',
+            int $expires_or_options = 0,
+            string $path = '',
+        ): void {
+            echo "$name: $value";
+        }
+    }
+};
+
 
 namespace RezaFikkri\PLM\Controller {
     use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +44,7 @@ namespace RezaFikkri\PLM\Controller {
         Repository\UserRepository,
     };
     use RezaFikkri\PLM\Library\Flash;
+    use RezaFikkri\PLM\Repository\SessionRepository;
 
     class UserControllerTest extends TestCase
     {
@@ -44,7 +58,9 @@ namespace RezaFikkri\PLM\Controller {
             $this->flash = flash();
 
             // clear users
+            $sessionRepository = new SessionRepository(Database::getConnection());
             $this->userRepository = new UserRepository(Database::getConnection());
+            $sessionRepository->deleteAll();
             $this->userRepository->deleteAll();
 
             // reset $_POST and $_COOKIE
@@ -161,7 +177,7 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->controller->postLogin();
 
-            $this->expectOutputString('Location: /');
+            $this->expectOutputRegex("#^$_ENV[SESSION_NAME](?=.*Location: /)#");
         }
 
         #[Test]

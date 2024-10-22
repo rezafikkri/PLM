@@ -14,6 +14,9 @@ class UserRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->repository = new UserRepository(Database::getConnection());
+        $sessionRepository = new SessionRepository(Database::getConnection());
+
+        $sessionRepository->deleteAll();
         $this->repository->deleteAll(); // clear all users before each test
     }
 

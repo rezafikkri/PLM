@@ -7,18 +7,23 @@ use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
+use RezaFikkri\PLM\Repository\SessionRepository;
 use RezaFikkri\PLM\Repository\UserRepository;
+use RezaFikkri\PLM\Service\SessionService;
 use RezaFikkri\PLM\Service\UserService;
 
 class UserController
 {
     private UserService $userService;
+    private SessionService $sessionService;
 
     public function __construct()
     {
         $dbc = Database::getConnection();
         $userRepository = new UserRepository($dbc);
         $this->userService = new UserService($userRepository);
+        $sessionRepository = new SessionRepository($dbc);
+        $this->sessionService = new SessionService($sessionRepository, $userRepository);
     }
 
     public function register(): void
@@ -71,7 +76,8 @@ class UserController
         $request->setPassword($_POST['password']);
 
         try {
-            $this->userService->login($request);
+            $response = $this->userService->login($request);
+            $this->sessionService->create($response->getUser()->getId());
             redirect()->to('/');
         } catch (ValidationException $e) {
             flash()->setData('errors', $e->getMessages());

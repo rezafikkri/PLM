@@ -9,6 +9,7 @@ use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
+use RezaFikkri\PLM\Repository\SessionRepository;
 use RezaFikkri\PLM\Repository\UserRepository;
 
 class UserServiceTest extends TestCase
@@ -18,10 +19,11 @@ class UserServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $dbc = Database::getConnection();
-        $this->userRepository = new UserRepository($dbc);
+        $this->userRepository = new UserRepository(Database::getConnection());
+        $sessionRepository = new SessionRepository(Database::getConnection());
         $this->userService = new UserService($this->userRepository);
 
+        $sessionRepository->deleteAll();
         $this->userRepository->deleteAll(); // clear all user from db before each test
     }
 

@@ -10,13 +10,15 @@ use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Repository\SessionRepository;
 use RezaFikkri\PLM\Repository\UserRepository;
 
-function setcookie(
-    string $name,
-    string $value = '',
-    int $expires_or_options = 0,
-    string $path = '',
-): void {
-    echo "$name: $value";
+if (!function_exists(__NAMESPACE__ . '\setcookie')) {
+    function setcookie(
+        string $name,
+        string $value = '',
+        int $expires_or_options = 0,
+        string $path = '',
+    ): void {
+        echo "$name: $value";
+    }
 }
 
 class SessionServiceTest extends TestCase
@@ -33,6 +35,7 @@ class SessionServiceTest extends TestCase
         $this->userRepository = new UserRepository($dbc);
         $this->sessionService = new SessionService($this->sessionRepository, $this->userRepository);
 
+        $this->sessionRepository->deleteAll();// clear all session data before each test
         $this->userRepository->deleteAll();
 
         $_COOKIE = [];
@@ -41,11 +44,6 @@ class SessionServiceTest extends TestCase
         $this->user->setUsername('rezafikkri');
         $this->user->setPassword('password');
         $this->userRepository->save($this->user);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->sessionRepository->deleteAll();// clear all session data before each test
     }
 
     #[Test]
