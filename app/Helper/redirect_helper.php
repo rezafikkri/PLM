@@ -9,5 +9,5 @@ function redirect(): Redirect
 
 function old(string $key): string
 {
-    return htmlspecialchars(flash()->getFlashData('form')[$key] ?? '');
+    return htmlspecialchars(flash()->getData('form')[$key] ?? '');
 }

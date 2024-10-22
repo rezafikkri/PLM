@@ -62,18 +62,18 @@ class FlashTest extends TestCase
     }
 
     #[Test]
-    public function getFlashData(): void
+    public function getData(): void
     {
         $_COOKIE[$this->flash->getName('email')] = json_encode('adelina@gmail.com');
 
-        $data = $this->flash->getFlashData('email');
+        $data = $this->flash->getData('email');
         $this->assertEquals('adelina@gmail.com', $data);
     }
 
     #[Test]
-    public function getFlashDataNotFound(): void
+    public function getDataNotFound(): void
     {
-        $data = $this->flash->getFlashData('email');
+        $data = $this->flash->getData('email');
         $this->assertNull($data);
     }
 

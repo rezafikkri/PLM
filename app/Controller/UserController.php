@@ -28,7 +28,7 @@ class UserController
         ];
 
         $flash = flash();
-        if ($errors = $flash->getFlashData('errors')) {
+        if ($errors = $flash->getData('errors')) {
             $model['errors'] = $errors;
         }
 
@@ -57,7 +57,7 @@ class UserController
         ];
 
         $flash = flash();
-        if ($errors = $flash->getFlashData('errors')) {
+        if ($errors = $flash->getData('errors')) {
             $model['errors'] = $errors;
         }
 

@@ -42,7 +42,7 @@ class Flash
         }
     }
 
-    public function getFlashData(string $key): array|string|null
+    public function getData(string $key): array|string|null
     {
         return json_decode($_COOKIE[$this->getName($key)] ?? "", true);
     }
