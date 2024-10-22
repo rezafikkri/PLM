@@ -16,7 +16,7 @@ class Flash
 
     public function getFlashName(string $key): string
     {
-        return self::NAME . '.' . $key;
+        return self::NAME . '_' . $key;
     }
 
     public function setFlashData(string $key, iterable|string $value): void

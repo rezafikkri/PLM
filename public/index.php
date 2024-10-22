@@ -21,4 +21,4 @@ Router::add('POST', '/users/login', UserController::class, 'postLogin');
 Router::run();
 
 // clear session (flash, form)
-// flash()->clear();
+flash()->clear();
