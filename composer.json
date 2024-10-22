@@ -26,7 +26,7 @@
     },
     "files": [
       "app/Helper/redirect_helper.php",
-      "app/Helper/session_helper.php"
+      "app/Helper/flash_helper.php"
     ]
   },
   "autoload-dev": {
