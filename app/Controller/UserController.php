@@ -84,4 +84,10 @@ class UserController
             redirect()->withInput()->to('/users/login');
         }
     }
+
+    public function logout(): void
+    {
+        $this->sessionService->destroy();
+        redirect()->to('/');
+    }
 }
