@@ -43,12 +43,14 @@ namespace RezaFikkri\PLM\Controller {
         Entity\User,
         Repository\UserRepository,
     };
+    use RezaFikkri\PLM\Entity\Session;
     use RezaFikkri\PLM\Library\Flash;
     use RezaFikkri\PLM\Repository\SessionRepository;
 
     class UserControllerTest extends TestCase
     {
         private UserController $controller;
+        private SessionRepository $sessionRepository;
         private UserRepository $userRepository;
         private Flash $flash;
 
@@ -58,9 +60,9 @@ namespace RezaFikkri\PLM\Controller {
             $this->flash = flash();
 
             // clear users
-            $sessionRepository = new SessionRepository(Database::getConnection());
+            $this->sessionRepository = new SessionRepository(Database::getConnection());
             $this->userRepository = new UserRepository(Database::getConnection());
-            $sessionRepository->deleteAll();
+            $this->sessionRepository->deleteAll();
             $this->userRepository->deleteAll();
 
             // reset $_POST and $_COOKIE
@@ -244,6 +246,25 @@ namespace RezaFikkri\PLM\Controller {
             $this->expectOutputString(
                 $errors . $form . 'Location: /users/login'
             );
+        }
+
+        #[Test]
+        public function logout(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword('password');
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $this->controller->logout();
+
+            $this->expectOutputString($_ENV['SESSION_NAME'] . ': ' . 'Location: /');
         }
     }
 };
