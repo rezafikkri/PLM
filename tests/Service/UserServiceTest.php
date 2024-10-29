@@ -37,8 +37,10 @@ class UserServiceTest extends TestCase
 
         $response = $this->userService->register($request);
 
-        $this->assertEquals($request->getUsername(), $response->getUser()->getUsername());
-        $this->assertTrue(password_verify($request->getPassword(), $response->getUser()->getPassword()));
+        $userInserted = $this->userRepository->findById($response->getUser()->getId());
+
+        $this->assertEquals($request->getUsername(), $userInserted->getUsername());
+        $this->assertTrue(password_verify($request->getPassword(), $userInserted->getPassword()));
     }
 
     #[Test]
