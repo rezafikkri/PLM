@@ -130,10 +130,7 @@ class UserService
             $user->setPassword($request->getPassword());
         }
 
-        $isUpdated = $this->userRepository->update($user);
-        if (!$isUpdated) {
-            throw new ValidationException(['Update failed.']);
-        }
+        $this->userRepository->update($user);
 
         $response = new UserProfileUpdateResponse;
         $response->setUser($user);
