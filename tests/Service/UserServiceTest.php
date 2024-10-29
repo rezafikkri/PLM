@@ -134,34 +134,12 @@ class UserServiceTest extends TestCase
         $request = new UserProfileUpdateRequest;
         $request->setId($user->getId());
         $request->setUsername('rezafikkrinewyes');
-        $request->setPassword('rezapasswordhaha12312398iuasoiudasodjh');
 
         $this->userService->updateProfile($request);
 
         $userUpdated = $this->userRepository->findById($request->getId());
         $this->assertEquals($request->getUsername(), $userUpdated->getUsername());
-        $this->assertTrue(password_verify($request->getPassword(), $userUpdated->getPassword()));
-    }
-
-    #[Test]
-    public function updateProfileSuccessWithSameUsernameAndNewPassword(): void
-    {
-        $user = new User;
-        $user->setUsername('rezafikkrii');
-        $user->setPassword(password_hash('password12345', PASSWORD_BCRYPT));
-
-        $this->userRepository->save($user);
-
-        $request = new UserProfileUpdateRequest;
-        $request->setId($user->getId());
-        $request->setUsername('rezafikkrii');
-        $request->setPassword('rezapasswordhaha12312398iuasoiudasodjh123kljasdkj');
-
-        $this->userService->updateProfile($request);
-
-        $userUpdated = $this->userRepository->findById($request->getId());
-        $this->assertEquals($user->getUsername(), $userUpdated->getUsername());
-        $this->assertTrue(password_verify($request->getPassword(), $userUpdated->getPassword()));
+        $this->assertTrue(password_verify('password12345', $userUpdated->getPassword()));
     }
 
     #[Test]
@@ -171,30 +149,20 @@ class UserServiceTest extends TestCase
 
         $request = new UserProfileUpdateRequest;
         $request->setId(0);
-        $request->setUsername('rezafikkrinewyes');
-        $request->setPassword('   ');
+        $request->setUsername('rez');
 
         $this->userService->updateProfile($request);
     }
 
     #[Test]
-    public function updateProfileWithEmptyPassword(): void
+    public function updateProfileNotFound(): void
     {
-        $user = new User;
-        $user->setUsername('rezafikkri');
-        $user->setPassword(password_hash('gegepassword12345', PASSWORD_BCRYPT));
-
-        $this->userRepository->save($user);
+        $this->expectException(ValidationException::class);
 
         $request = new UserProfileUpdateRequest;
-        $request->setId($user->getId());
-        $request->setUsername('rezafikkrinewyesyes');
-        $request->setPassword('');
+        $request->setId(0);
+        $request->setUsername('rezafikkrinewyeshehe');
 
         $this->userService->updateProfile($request);
-
-        $userUpdated = $this->userRepository->findById($request->getId());
-        $this->assertEquals($request->getUsername(), $userUpdated->getUsername());
-        $this->assertTrue(password_verify('gegepassword12345', $userUpdated->getPassword()));
     }
 }

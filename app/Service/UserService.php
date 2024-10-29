@@ -121,14 +121,11 @@ class UserService
     {
         $this->validateUserProfileUpdateRequest($request);
 
-        $user = new User;
-        $user->setId($request->getId());
-        $user->setUsername($request->getUsername());
-        if (!empty($request->getPassword())) {
-            $user->setPassword(password_hash($request->getPassword(), PASSWORD_BCRYPT));
-        } else {
-            $user->setPassword($request->getPassword());
+        $user = $this->userRepository->findById($request->getId());
+        if (is_null($user)) {
+            throw new ValidationException(['User is not found.']);
         }
+        $user->setUsername($request->getUsername());
 
         $this->userRepository->update($user);
 
@@ -140,7 +137,6 @@ class UserService
     private function validateUserProfileUpdateRequest(UserProfileUpdateRequest $request): void
     {
         $validator = Validation::createValidator();
-
         $violations = $validator->validate($request->getUsername(), new Sequentially([
             new NotBlank([
                 'message' => 'Username should not be blank.'
@@ -151,19 +147,6 @@ class UserService
             ]),
             new IsUnique('users', 'username', 'id', $request->getId()),
         ]));
-
-        // validate password if not empty
-        if (!empty($request->getPassword())) {
-            $passwordViolations = $validator->validate($request->getPassword(), new Sequentially([
-                new NotBlank([
-                    'message' => 'Password should not be blank.',
-                ]),
-                new PasswordStrength(),
-            ]));
-            if (count($passwordViolations) > 0) {
-                $violations->add($passwordViolations->get(0));
-            }
-        }
 
         if (count($violations) > 0) {
             // mengapa melakukan throw? karena bagusnya, jika terjadi error, misalnya seperti

@@ -63,7 +63,7 @@ class UserRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function updateEntire(): void
+    public function updateSuccess(): void
     {
         $user = new User;
         $user->setUsername('rezafikkri');
@@ -80,25 +80,5 @@ class UserRepositoryTest extends TestCase
         $userUpdated = $this->repository->findById($user->getId());
         $this->assertEquals($newUser->getUsername(), $userUpdated->getUsername());
         $this->assertEquals($newUser->getPassword(), $userUpdated->getPassword());
-    }
-
-    #[Test]
-    public function updateWithEmptyPassword(): void
-    {
-        $user = new User;
-        $user->setUsername('rezafikkri');
-        $user->setPassword('password');
-        $this->repository->save($user);
-
-        $newUser = new User;
-        $newUser->setId($user->getId());
-        $newUser->setUsername('rezafikkrinewaa');
-        $newUser->setPassword('');
-
-        $this->repository->update($newUser);
-
-        $userUpdated = $this->repository->findById($user->getId());
-        $this->assertEquals($newUser->getUsername(), $userUpdated->getUsername());
-        $this->assertEquals($user->getPassword(), $userUpdated->getPassword());
     }
 }

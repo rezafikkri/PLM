@@ -31,19 +31,13 @@ class UserRepository
 
     public function update(User $user): User
     {
-        $sql = 'UPDATE users SET username = :username';
-        $params = [':username' => $user->getUsername()];
-
-        if (!empty($user->getPassword())) {
-            $sql .= ', password = :password';
-            $params[':password'] = $user->getPassword();
-        }
-
-        $sql .= ' WHERE id = :id';
-        $params[':id'] = $user->getId();
-
+        $sql = 'UPDATE users SET username = :username, password = :password WHERE id = :id';
         $stmt = $this->dbc->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute([
+            ':username' => $user->getUsername(),
+            ':password' => $user->getPassword(),
+            ':id' => $user->getId(),
+        ]);
         return $user;
     }
 
