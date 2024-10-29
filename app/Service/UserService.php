@@ -4,7 +4,14 @@ namespace RezaFikkri\PLM\Service;
 
 use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Exception\ValidationException;
-use RezaFikkri\PLM\Model\{UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserRegisterResponse};
+use RezaFikkri\PLM\Model\{
+    UserLoginRequest,
+    UserLoginResponse,
+    UserProfileUpdateRequest,
+    UserProfileUpdateResponse,
+    UserRegisterRequest,
+    UserRegisterResponse,
+};
 use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Validator\IsUnique;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -21,13 +28,14 @@ class UserService
 {
     public function __construct(
         private UserRepository $userRepository,
+        private SessionService $sessionService,
     ) {
         
     }
 
     public function register(UserRegisterRequest $request): UserRegisterResponse
     {
-        $this->ValidateUserRegistrationRequest($request);
+        $this->validateUserRegistrationRequest($request);
 
         $user = new User;
         $user->setUsername($request->getUsername());
@@ -39,9 +47,8 @@ class UserService
         return $response;
     }
 
-    private function ValidateUserRegistrationRequest(UserRegisterRequest $request): void
+    private function validateUserRegistrationRequest(UserRegisterRequest $request): void
     {
-        // validate username
         $validator = Validation::createValidator();
 
         $input = $request->getIterator()->getArrayCopy();
@@ -74,7 +81,7 @@ class UserService
 
     public function login(UserLoginRequest $request): UserLoginResponse
     {
-        $this->ValidateUserLoginRequest($request);
+        $this->validateUserLoginRequest($request);
 
         $user = $this->userRepository->findByUsername($request->getUsername());
         if (is_null($user)) {
@@ -90,7 +97,7 @@ class UserService
         throw new ValidationException(['Username or password is wrong.']);
     }
 
-    private function ValidateUserLoginRequest(UserLoginRequest $request): void
+    private function validateUserLoginRequest(UserLoginRequest $request): void
     {
         // validate username
         $validator = Validation::createValidator();
@@ -107,6 +114,70 @@ class UserService
         $violations = $validator->validate($input, $constraint);
 
         if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+    }
+
+    public function updateProfile(UserProfileUpdateRequest $request): UserProfileUpdateResponse
+    {
+        $this->validateUserProfileUpdateRequest($request);
+
+        $user = new User;
+        $user->setId($request->getId());
+        $user->setUsername($request->getUsername());
+        if (!empty($request->getPassword())) {
+            $user->setPassword(password_hash($request->getPassword(), PASSWORD_BCRYPT));
+        } else {
+            $user->setPassword($request->getPassword());
+        }
+
+        $isUpdated = $this->userRepository->update($user);
+        if (!$isUpdated) {
+            throw new ValidationException(['Update failed.']);
+        }
+
+        $response = new UserProfileUpdateResponse;
+        $response->setUser($user);
+        return $response;
+    }
+
+    private function validateUserProfileUpdateRequest(UserProfileUpdateRequest $request): void
+    {
+        $validator = Validation::createValidator();
+
+        $input = $request->getIterator()->getArrayCopy();
+        $constraint = new Collection([
+            'username' => new Sequentially([
+                new NotBlank([
+                    'message' => 'Username should not be blank.'
+                ]),
+                new Length([
+                    'min' => 4,
+                    'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
+                ]),
+                new IsUnique('users', 'username', 'id', $request->getId()),
+            ]),
+        ]);
+        $violations = $validator->validate($input, $constraint);
+
+        // validate password if not empty
+        if (!empty($request->getPassword())) {
+            $passwordViolations = $validator->validate('password', [
+                'password' => new Sequentially([
+                    new NotBlank([
+                        'message' => 'Password should not be blank.',
+                    ]),
+                    new PasswordStrength(),
+                ]),
+            ]);
+            if (count($passwordViolations) > 0) {
+                $violations->add($passwordViolations->get(0));
+            }
+        }
+
+        if (count($violations) > 0) {
+            // mengapa melakukan throw? karena bagusnya, jika terjadi error, misalnya seperti
+            // ada validasi yang tidak lolos, maka sebaiknya kita melakukan throw Exception
             throw new ValidationException($violations);
         }
     }

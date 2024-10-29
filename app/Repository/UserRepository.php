@@ -5,8 +5,6 @@ namespace RezaFikkri\PLM\Repository;
 use PDO;
 use RezaFikkri\PLM\Entity\User;
 
-use function PHPUnit\Framework\isEmpty;
-
 class UserRepository
 {
     public function __construct(
@@ -31,7 +29,7 @@ class UserRepository
         return $user;
     }
 
-    public function update(User $user): User
+    public function update(User $user): bool
     {
         $sql = 'UPDATE users SET username = :username';
         $params = [':username' => $user->getUsername()];
@@ -46,7 +44,7 @@ class UserRepository
 
         $stmt = $this->dbc->prepare($sql);
         $stmt->execute($params);
-        return $user;
+        return $stmt->rowCount();
     }
 
     public function findById(int $id): ?User
