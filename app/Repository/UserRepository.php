@@ -37,9 +37,12 @@ class UserRepository
         $params = [':username' => $user->getUsername()];
 
         if (!empty($user->getPassword())) {
-            $sql .= ' password = :password';
+            $sql .= ', password = :password';
             $params[':password'] = $user->getPassword();
         }
+
+        $sql .= ' WHERE id = :id';
+        $params[':id'] = $user->getId();
 
         $stmt = $this->dbc->prepare($sql);
         $stmt->execute($params);
