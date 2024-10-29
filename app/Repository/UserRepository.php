@@ -5,6 +5,8 @@ namespace RezaFikkri\PLM\Repository;
 use PDO;
 use RezaFikkri\PLM\Entity\User;
 
+use function PHPUnit\Framework\isEmpty;
+
 class UserRepository
 {
     public function __construct(
@@ -26,6 +28,21 @@ class UserRepository
         ]);
         $id = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
         $user->setId($id);
+        return $user;
+    }
+
+    public function update(User $user): User
+    {
+        $sql = 'UPDATE users SET username = :username';
+        $params = [':username' => $user->getUsername()];
+
+        if (!empty($user->getPassword())) {
+            $sql .= ' password = :password';
+            $params[':password'] = $user->getPassword();
+        }
+
+        $stmt = $this->dbc->prepare($sql);
+        $stmt->execute($params);
         return $user;
     }
 
