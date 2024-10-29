@@ -29,7 +29,7 @@ class UserRepository
         return $user;
     }
 
-    public function update(User $user): bool
+    public function update(User $user): User
     {
         $sql = 'UPDATE users SET username = :username';
         $params = [':username' => $user->getUsername()];
@@ -44,7 +44,7 @@ class UserRepository
 
         $stmt = $this->dbc->prepare($sql);
         $stmt->execute($params);
-        return $stmt->rowCount();
+        return $user;
     }
 
     public function findById(int $id): ?User
