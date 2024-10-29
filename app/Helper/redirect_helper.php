@@ -4,7 +4,7 @@ use RezaFikkri\PLM\Library\Redirect;
 
 function redirect(): Redirect
 {
-    return new Redirect(flash());
+    return new Redirect();
 }
 
 function old(string $key): string

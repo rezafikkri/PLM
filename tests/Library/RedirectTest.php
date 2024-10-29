@@ -30,7 +30,7 @@ class RedirectTest extends TestCase
     protected function setUp(): void
     {
         $this->flash = flash();
-        $this->redirect = new Redirect($this->flash);
+        $this->redirect = new Redirect();
 
         // reset $_POST
         $_POST = [];

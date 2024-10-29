@@ -4,14 +4,9 @@ namespace RezaFikkri\PLM\Library;
 
 class Redirect
 {
+    private ?Flash $flash = null;
     private bool $withInput = false;
-
-    public function __construct(
-        private Flash $flash,
-        private string $path = '/',
-    ) {
-        
-    }
+    private string $path = '/';
 
     private function redirect(): void
     {
@@ -44,6 +39,7 @@ class Redirect
 
     public function withInput(): self
     {
+        $this->flash = new Flash;
         $this->withInput = true;
         return $this;
     }
