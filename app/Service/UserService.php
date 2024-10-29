@@ -28,7 +28,6 @@ class UserService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private SessionService $sessionService,
     ) {
         
     }
