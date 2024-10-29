@@ -6,7 +6,6 @@ class UserProfileUpdateRequest
 {
     private ?int $id = null;
     private ?string $username = null;
-    private ?string $password = null;
 
     public function getId(): ?int
     {
@@ -26,14 +25,4 @@ class UserProfileUpdateRequest
     public function setUsername(?string $username): void {
         $this->username = $username;
     }
-
-    // Getter and Setter for $password
-    public function getPassword(): ?string {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): void {
-        $this->password = $password;
-    }
-
 }

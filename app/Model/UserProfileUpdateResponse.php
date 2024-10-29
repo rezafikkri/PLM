@@ -17,5 +17,4 @@ class UserProfileUpdateResponse
     {
         return $this->user;
     }
-
 }
