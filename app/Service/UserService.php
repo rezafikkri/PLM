@@ -141,31 +141,25 @@ class UserService
     {
         $validator = Validation::createValidator();
 
-        $input = $request->getIterator()->getArrayCopy();
-        $constraint = new Collection([
-            'username' => new Sequentially([
-                new NotBlank([
-                    'message' => 'Username should not be blank.'
-                ]),
-                new Length([
-                    'min' => 4,
-                    'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
-                ]),
-                new IsUnique('users', 'username', 'id', $request->getId()),
+        $violations = $validator->validate($request->getUsername(), new Sequentially([
+            new NotBlank([
+                'message' => 'Username should not be blank.'
             ]),
-        ]);
-        $violations = $validator->validate($input, $constraint);
+            new Length([
+                'min' => 4,
+                'minMessage' => 'Username is too short. It should have {{ limit }} characters or more.',
+            ]),
+            new IsUnique('users', 'username', 'id', $request->getId()),
+        ]));
 
         // validate password if not empty
         if (!empty($request->getPassword())) {
-            $passwordViolations = $validator->validate('password', [
-                'password' => new Sequentially([
-                    new NotBlank([
-                        'message' => 'Password should not be blank.',
-                    ]),
-                    new PasswordStrength(),
+            $passwordViolations = $validator->validate($request->getPassword(), new Sequentially([
+                new NotBlank([
+                    'message' => 'Password should not be blank.',
                 ]),
-            ]);
+                new PasswordStrength(),
+            ]));
             if (count($passwordViolations) > 0) {
                 $violations->add($passwordViolations->get(0));
             }

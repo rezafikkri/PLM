@@ -1,5 +1,5 @@
 <main class="form-plm w-100 mx-auto mt-6">
-    <h1 class="h2 mb-2 fw-bold">Hello <?= $username ?></h1>
+    <h1 class="h2 mb-2 fw-bold">Hello <?= htmlspecialchars($username) ?></h1>
     <p class="mb-4 text-body-secondary">Welcome to PHP Login Management System</p>
 
     <a href="/users/profile" class="btn btn-lg btn-primary w-100 mb-2.5 fw-medium">Profile</a>

@@ -2,24 +2,11 @@
 
 namespace RezaFikkri\PLM\Model;
 
-use ArrayIterator;
-use IteratorAggregate;
-use Traversable;
-
-class UserProfileUpdateRequest implements IteratorAggregate
+class UserProfileUpdateRequest
 {
-    private ?int $id;
-    private ?string $username;
-    private ?string $password;
-
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator([
-            'id' => $this->id,
-            'username' => $this->username,
-            'password' => $this->password,
-        ]);
-    }
+    private ?int $id = null;
+    private ?string $username = null;
+    private ?string $password = null;
 
     public function getId(): ?int
     {
