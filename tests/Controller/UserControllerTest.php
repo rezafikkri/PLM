@@ -95,10 +95,12 @@ namespace RezaFikkri\PLM\Controller {
         #[Test]
         public function postRegisterSuccess(): void
         {
-            $_POST['username'] = 'rezafikkri';
+            $_POST['username'] = 'rezafikkriqwdhnma;vlasdpjapsdj';
             $_POST['password'] = 'passwordkjlaskhdlashdalskdasdahsd';
             $this->controller->postRegister();
 
+            $userRegistered = $this->userRepository->findByUsername($_POST['username']);
+            $this->assertNotNull($userRegistered);
             $this->expectOutputString('Location: /users/login');
         }
 
