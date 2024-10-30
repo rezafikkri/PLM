@@ -8,6 +8,7 @@ use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
+use RezaFikkri\PLM\Model\UserPasswordUpdateRequest;
 use RezaFikkri\PLM\Model\UserProfileUpdateRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
 use RezaFikkri\PLM\Repository\SessionRepository;
@@ -137,7 +138,7 @@ class UserServiceTest extends TestCase
 
         $this->userService->updateProfile($request);
 
-        $userUpdated = $this->userRepository->findById($request->getId());
+        $userUpdated = $this->userRepository->findById($user->getId());
         $this->assertEquals($request->getUsername(), $userUpdated->getUsername());
         $this->assertTrue(password_verify('password12345', $userUpdated->getPassword()));
     }
@@ -164,5 +165,71 @@ class UserServiceTest extends TestCase
         $request->setUsername('rezafikkrinewyeshehe');
 
         $this->userService->updateProfile($request);
+    }
+
+    #[Test]
+    public function updatePasswordSuccess(): void
+    {
+        $user = new User;
+        $user->setUsername('rezafikkri');
+        $user->setPassword(password_hash('password12345', PASSWORD_BCRYPT));
+
+        $this->userRepository->save($user);
+
+        $request = new UserPasswordUpdateRequest;
+        $request->setId($user->getId());
+        $request->setOldPassword('password12345');
+        $request->setNewPassword('joiuoje90r8-19321jisfpqnviajs-fd0qwie;');
+
+        $this->userService->updatePassword($request);
+
+        $userUpdated = $this->userRepository->findById($user->getId());
+        $this->assertEquals($user->getUsername(), $userUpdated->getUsername());
+        $this->assertTrue(password_verify($request->getNewPassword(), $userUpdated->getPassword()));
+    }
+
+    #[Test]
+    public function updatePasswordValidationError(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $request = new UserPasswordUpdateRequest;
+        $request->setId(0);
+        $request->setOldPassword('');
+        $request->setNewPassword('');
+
+        $this->userService->updatePassword($request);
+    }
+
+    #[Test]
+    public function updatePasswordWithWrongOldPassword(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $user = new User;
+        $user->setUsername('rezafikkri');
+        $user->setPassword(password_hash('password12345', PASSWORD_BCRYPT));
+
+        $this->userRepository->save($user);
+
+        $request = new UserPasswordUpdateRequest;
+        $request->setId($user->getId());
+        $request->setOldPassword('wrong');
+        $request->setNewPassword('kljalskdnas09diawejoqijawnasijdafnm9uad1-23');
+
+        $this->userService->updatePassword($request);
+    }
+
+    #[Test]
+    public function updatePasswordNotFound(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $request = new UserPasswordUpdateRequest;
+        $request->setId(0);
+        $request->setOldPassword('unknown');
+        $request->setNewPassword('poiqwe90123op[aofnaisfmasfopp-1230123efgfg]');
+
+        $this->userService->updatePassword($request);
     }
 }
