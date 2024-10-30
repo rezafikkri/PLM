@@ -82,7 +82,7 @@ class FlashTest extends TestCase
     {
         $this->flash->clear();
         $this->expectOutputString(
-            $this->flash->getName('form') . ': ' . $this->flash->getName('errors') . ': '
+            $this->flash->getName('form') . ': ' . $this->flash->getName('errors') . ': ' . $this->flash->getName('success') . ': '
         );
     }
 }

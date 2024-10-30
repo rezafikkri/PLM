@@ -266,5 +266,126 @@ namespace RezaFikkri\PLM\Controller {
 
             $this->expectOutputString($_ENV['SESSION_NAME'] . ': ' . 'Location: /');
         }
+
+        #[Test]
+        public function updateProfile(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword('password');
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $this->controller->updateProfile();
+
+            $this->expectOutputRegex('#(?=.*Update Profile)(?=.*rezafikkri)#s');
+        }
+
+        #[Test]
+        public function updateProfileError(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkrihahayeye');
+            $user->setPassword('password');
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $errors = ['Username is too short. It should have 4 characters or more.'];
+            $_COOKIE[$this->flash->getName('errors')] = json_encode($errors);
+            $_COOKIE[$this->flash->getName('form')] = json_encode(['username' => 'geg']);
+
+            $this->controller->updateProfile();
+
+            $this->expectOutputRegex(
+                "#(?=.*Update Profile)(?=.*$errors[0])(?=.*geg)#s"
+            );
+        }
+
+        #[Test]
+        public function updateProfileSuccess(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkrihahayeye');
+            $user->setPassword('password');
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $success = 'Profile updated.';
+            $_COOKIE[$this->flash->getName('success')] = json_encode($success);
+
+            $this->controller->updateProfile();
+
+            $this->expectOutputRegex(
+                "#(?=.*Update Profile)(?=.*$success)#s"
+            );
+        }
+
+        #[Test]
+        public function postUpdateProfileSuccess(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $_POST['username'] = 'halsjdhfnkjashdfnsadjhsiv';
+
+            $this->controller->postUpdateProfile();
+
+            $userUpdated = $this->userRepository->findById($session->getUserId());
+            $this->assertEquals($_POST['username'], $userUpdated->getUsername());
+            $this->assertTrue(password_verify('password', $userUpdated->getPassword()));
+            
+            $success = $this->flash->getName('success') . ': ' . json_encode('Profile updated.');
+            $this->expectOutputString($success . 'Location: /users/profile');
+        }
+
+        #[Test]
+        public function postUpdateProfileValidationError(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $_POST['username'] = '';
+
+            $this->controller->postUpdateProfile();
+
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
+                'Username should not be blank.',
+            ]);
+            $form = $this->flash->getName('form') . ': ' . json_encode([
+                'username' => '',
+            ]);
+            $this->expectOutputString($errors . $form . 'Location: /users/profile');
+        }
     }
 };
