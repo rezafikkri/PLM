@@ -2,21 +2,12 @@
 
 namespace RezaFikkri\PLM\Library;
 
+require_once __DIR__ . '/../helper.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-
-if (!function_exists(__NAMESPACE__ . '\setcookie')) {
-    function setcookie(
-        string $name,
-        string $value = '',
-        int $expires_or_options = 0,
-        string $path = '',
-    ): void {
-        echo "$name: $value";
-    }
-}
 
 class FlashTest extends TestCase
 {

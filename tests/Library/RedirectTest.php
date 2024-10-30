@@ -2,25 +2,10 @@
 
 namespace RezaFikkri\PLM\Library;
 
+require_once __DIR__ . '/../helper.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-
-if (!function_exists(__NAMESPACE__ . '\setcookie')) {
-    function setcookie(
-        string $name,
-        string $value = '',
-        int $expires_or_options = 0,
-        string $path = '',
-    ): void {
-        echo "$name: $value";
-    }
-}
-
-if (!function_exists(__NAMESPACE__ . '\header')) {
-    function header(string $value) {
-        echo $value;
-    }
-}
 
 class RedirectTest extends TestCase
 {

@@ -2,6 +2,8 @@
 
 namespace RezaFikkri\PLM\Service;
 
+require_once __DIR__ . '/../helper.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -9,17 +11,6 @@ use RezaFikkri\PLM\Entity\Session;
 use RezaFikkri\PLM\Entity\User;
 use RezaFikkri\PLM\Repository\SessionRepository;
 use RezaFikkri\PLM\Repository\UserRepository;
-
-if (!function_exists(__NAMESPACE__ . '\setcookie')) {
-    function setcookie(
-        string $name,
-        string $value = '',
-        int $expires_or_options = 0,
-        string $path = '',
-    ): void {
-        echo "$name: $value";
-    }
-}
 
 class SessionServiceTest extends TestCase
 {
