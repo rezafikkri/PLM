@@ -6,6 +6,7 @@ use RezaFikkri\PLM\App\View;
 use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
+use RezaFikkri\PLM\Model\UserPasswordUpdateRequest;
 use RezaFikkri\PLM\Model\UserProfileUpdateRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
 use RezaFikkri\PLM\Repository\SessionRepository;
@@ -122,6 +123,40 @@ class UserController
         } catch (ValidationException $e) {
             flash()->setData('errors', $e->getMessages());
             redirect()->withInput()->to('/users/profile');
+        }
+    }
+
+    public function updatePassword(): void
+    {
+        $model = [
+            'title' => 'Update Password',
+        ];
+
+        $flash = flash();
+        if ($errors = $flash->getData('errors')) {
+            $model['errors'] = $errors;
+        }
+        if ($success = $flash->getData('success')) {
+            $model['success'] = $success;
+        }
+
+        View::render('User/password', $model);
+    }
+
+    public function postUpdatePassword(): void
+    {
+        $request = new UserPasswordUpdateRequest;
+        $request->setId($this->sessionService->current()->getId());
+        $request->setOldPassword($_POST['oldPassword']);
+        $request->setNewPassword($_POST['newPassword']);
+
+        try {
+            $this->userService->updatePassword($request);
+            flash()->setData('success', 'Password updated.');
+            redirect()->to('/users/password');
+        } catch (ValidationException $e) {
+            flash()->setData('errors', $e->getMessages());
+            redirect()->withInput()->to('/users/password');
         }
     }
 }

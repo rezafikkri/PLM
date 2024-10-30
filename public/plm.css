@@ -39,13 +39,13 @@ body {
   z-index: 2;
 }
 
-.form-plm .form-floating input:not(.rounded-all) {
+.form-plm .form-floating:nth-child(1) input:not(.rounded-all) {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-plm .form-floating input:not(.rounded-all) {
+.form-plm .form-floating:nth-child(2) input:not(.rounded-all) {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
