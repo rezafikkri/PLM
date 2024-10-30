@@ -45,7 +45,7 @@ class UserServiceTest extends TestCase
     }
 
     #[Test]
-    public function registerFailed(): void
+    public function registerValidationError(): void
     {
         $this->expectException(ValidationException::class);
 
@@ -144,7 +144,7 @@ class UserServiceTest extends TestCase
     }
 
     #[Test]
-    public function updateProfileFailed(): void
+    public function updateProfileValidationError(): void
     {
         $this->expectException(ValidationException::class);
 
