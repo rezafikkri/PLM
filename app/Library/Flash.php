@@ -49,7 +49,7 @@ class Flash
 
     public function clear(): void
     {
-        $flashes = ['form','errors'];
+        $flashes = ['form','errors','success'];
         foreach ($flashes as $flash) {
             setcookie($this->getName($flash), expires_or_options: 1, path: self::PATH);
         }

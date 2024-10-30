@@ -6,6 +6,7 @@ use RezaFikkri\PLM\App\View;
 use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
+use RezaFikkri\PLM\Model\UserProfileUpdateRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
 use RezaFikkri\PLM\Repository\SessionRepository;
 use RezaFikkri\PLM\Repository\UserRepository;
@@ -19,10 +20,9 @@ class UserController
 
     public function __construct()
     {
-        $dbc = Database::getConnection();
-        $userRepository = new UserRepository($dbc);
+        $userRepository = new UserRepository(Database::getConnection());
         $this->userService = new UserService($userRepository);
-        $sessionRepository = new SessionRepository($dbc);
+        $sessionRepository = new SessionRepository(Database::getConnection());
         $this->sessionService = new SessionService($sessionRepository, $userRepository);
     }
 
@@ -89,5 +89,39 @@ class UserController
     {
         $this->sessionService->destroy();
         redirect()->to('/');
+    }
+
+    public function updateProfile(): void
+    {
+        $model = [
+            'title' => 'Update Profile',
+            'user' => $this->sessionService->current(),
+        ];
+
+        $flash = flash();
+        if ($errors = $flash->getData('errors')) {
+            $model['errors'] = $errors;
+        }
+        if ($success = $flash->getData('success')) {
+            $model['success'] = $success;
+        }
+
+        View::render('User/profile', $model);
+    }
+
+    public function postUpdateProfile(): void
+    {
+        $request = new UserProfileUpdateRequest;
+        $request->setId($this->sessionService->current()->getId());
+        $request->setUsername($_POST['username']);
+
+        try {
+            $this->userService->updateProfile($request);
+            flash()->setData('success', 'Profile updated.');
+            redirect()->to('/users/profile');
+        } catch (ValidationException $e) {
+            flash()->setData('errors', $e->getMessages());
+            redirect()->withInput()->to('/users/profile');
+        }
     }
 }

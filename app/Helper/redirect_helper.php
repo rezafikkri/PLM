@@ -7,7 +7,11 @@ function redirect(): Redirect
     return new Redirect();
 }
 
-function old(string $key): string
+function old(string $key, string $default = ''): string
 {
-    return htmlspecialchars(flash()->getData('form')[$key] ?? '');
+    $oldValue = flash()->getData('form')[$key] ?? null;
+    if (is_null($oldValue) || empty(trim($oldValue))) {
+        return htmlspecialchars($default);
+    }
+    return htmlspecialchars($oldValue);
 }
