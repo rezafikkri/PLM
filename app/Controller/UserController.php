@@ -156,7 +156,7 @@ class UserController
             redirect()->to('/users/password');
         } catch (ValidationException $e) {
             flash()->setData('errors', $e->getMessages());
-            redirect()->withInput()->to('/users/password');
+            redirect()->to('/users/password');
         }
     }
 }

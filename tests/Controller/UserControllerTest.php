@@ -389,5 +389,116 @@ namespace RezaFikkri\PLM\Controller {
             ]);
             $this->expectOutputString($errors . $form . 'Location: /users/profile');
         }
+
+        #[Test]
+        public function updatePassword(): void
+        {
+            $this->controller->updatePassword();
+            $this->expectOutputRegex('#(?=.*Update Password)(?=.*oldPassword)(?=.*newPassword)#s');
+        }
+
+        #[Test]
+        public function updatePasswordError(): void
+        {
+            $errors = ['Old Password should not be blank.'];
+            $_COOKIE[$this->flash->getName('errors')] = json_encode($errors);
+
+            $this->controller->updatePassword();
+
+            $this->expectOutputRegex(
+                "#(?=.*Update Password)(?=.*$errors[0])#s"
+            );
+        }
+
+        #[Test]
+        public function updatePasswordSuccess(): void
+        {
+            $success = 'Password updated.';
+            $_COOKIE[$this->flash->getName('success')] = json_encode($success);
+
+            $this->controller->updatePassword();
+
+            $this->expectOutputRegex(
+                "#(?=.*Update Password)(?=.*$success)#s"
+            );
+        }
+
+        #[Test]
+        public function postUpdatePasswordSuccess(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $_POST['oldPassword'] = 'password';
+            $_POST['newPassword'] = 'kjawdi91-0293jpawndmasocm(98masd';
+
+            $this->controller->postUpdatePassword();
+
+            $userUpdated = $this->userRepository->findById($session->getUserId());
+            $this->assertEquals($user->getUsername(), $userUpdated->getUsername());
+            $this->assertTrue(password_verify($_POST['newPassword'], $userUpdated->getPassword()));
+            
+            $success = $this->flash->getName('success') . ': ' . json_encode('Password updated.');
+            $this->expectOutputString($success . 'Location: /users/password');
+        }
+
+        #[Test]
+        public function postUpdatePasswordValidationError(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $_POST['oldPassword'] = '';
+            $_POST['newPassword'] = '';
+
+            $this->controller->postUpdatePassword();
+
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
+                'Old Password should not be blank.',
+                'New Password should not be blank.',
+            ]);
+            $this->expectOutputString($errors . 'Location: /users/password');
+        }
+
+        #[Test]
+        public function postUpdatePasswordWithWrongOldPassword(): void
+        {
+            $user = new User;
+            $user->setUsername('rezafikkri');
+            $user->setPassword(password_hash('password', PASSWORD_BCRYPT));
+            $this->userRepository->save($user);
+            
+            $session = new Session;
+            $session->setId(uniqid());
+            $session->setUserId($user->getId());
+            $this->sessionRepository->save($session);
+            $_COOKIE[$_ENV['SESSION_NAME']] = $session->getId();
+
+            $_POST['oldPassword'] = 'wrong';
+            $_POST['newPassword'] = 'i-09123japsodasnm;c=01-09-09kojamsdpascm';
+
+            $this->controller->postUpdatePassword();
+
+            $errors = $this->flash->getName('errors') . ': ' . json_encode([
+                'Old Password is wrong.',
+            ]);
+            $this->expectOutputString($errors . 'Location: /users/password');
+        }
     }
 };
