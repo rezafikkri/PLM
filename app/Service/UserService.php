@@ -7,6 +7,8 @@ use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\{
     UserLoginRequest,
     UserLoginResponse,
+    UserPasswordUpdateRequest,
+    UserPasswordUpdateResponse,
     UserProfileUpdateRequest,
     UserProfileUpdateResponse,
     UserRegisterRequest,
@@ -147,6 +149,53 @@ class UserService
             ]),
             new IsUnique('users', 'username', 'id', $request->getId()),
         ]));
+
+        if (count($violations) > 0) {
+            // mengapa melakukan throw? karena bagusnya, jika terjadi error, misalnya seperti
+            // ada validasi yang tidak lolos, maka sebaiknya kita melakukan throw Exception
+            throw new ValidationException($violations);
+        }
+    }
+
+    public function updatePassword(UserPasswordUpdateRequest $request): UserPasswordUpdateResponse
+    {
+        $this->validateUserPasswordUpdateRequest($request);
+
+        $user = $this->userRepository->findById($request->getId());
+        if (is_null($user)) {
+            throw new ValidationException(['User is not found.']);
+        }
+        if (!password_verify($request->getOldPassword(), $user->getPassword())) {
+            throw new ValidationException(['Old Password is wrong.']);
+        }
+
+        $user->setPassword(password_hash($request->getNewPassword(), PASSWORD_BCRYPT));
+        $this->userRepository->update($user);
+
+        $response = new UserPasswordUpdateResponse;
+        $response->setUser($user);
+        return $response;
+    }
+
+    private function validateUserPasswordUpdateRequest(UserPasswordUpdateRequest $request): void
+    {
+        $validator = Validation::createValidator();
+
+        $input = $request->getIterator()->getArrayCopy();
+        $constraint = new Collection([
+            'oldPassword' => new NotBlank([
+                'message' => 'Old Password should not be blank.',
+            ]),
+            'newPassword' => new Sequentially([
+                new NotBlank([
+                    'message' => 'New Password should not be blank.',
+                ]),
+                new PasswordStrength([
+                    'message' => 'The New Password strength is too low. Please use a stronger New Password.',
+                ]),
+            ]),
+        ]);
+        $violations = $validator->validate($input, $constraint);
 
         if (count($violations) > 0) {
             // mengapa melakukan throw? karena bagusnya, jika terjadi error, misalnya seperti
