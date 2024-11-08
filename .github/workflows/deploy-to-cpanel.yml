@@ -25,3 +25,35 @@ jobs:
       - name:  See Dir
         shell: bash
         run: ls -R
+
+      - name: Start Upload to Cpanel
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ftp.phploginmanagement.co-id.id
+          username: plm@phploginmanagement.co-id.id
+          password: ${{ secrets.PLM_FTP_PASSWORD }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/tests/**
+            architecture.txt
+            phpunit.xml
+
+      - name: Start Upload to Cpanel /public_html dir
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ftp.phploginmanagement.co-id.id
+          username: plm@phploginmanagement.co-id.id
+          password: ${{ secrets.PLM_FTP_PASSWORD }}
+          local-dir: ./public/
+          server-dir: ./public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/tests/**
+            architecture.txt
+            phpunit.xml
+            **/app/**
+            .env.example
+            composer.json
+            composer.lock
