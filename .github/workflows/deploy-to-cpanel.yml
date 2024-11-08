@@ -27,7 +27,7 @@ jobs:
         run: ls -R
 
       - name: Start Upload to Cpanel
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.phploginmanagement.co-id.id
           username: plm@phploginmanagement.co-id.id
@@ -40,7 +40,7 @@ jobs:
             phpunit.xml
 
       - name: Start Upload to Cpanel /public_html dir
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.phploginmanagement.co-id.id
           username: plm@phploginmanagement.co-id.id
