@@ -29,8 +29,8 @@ jobs:
       - name: Start Upload to Cpanel
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.phploginmanagement.co-id.id
-          username: plm@phploginmanagement.co-id.id
+          server: ftpupload.net
+          username: if0_37679888
           password: ${{ secrets.PLM_FTP_PASSWORD }}
           exclude: |
             **/.git*
@@ -42,11 +42,11 @@ jobs:
       - name: Start Upload to Cpanel /public_html dir
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.phploginmanagement.co-id.id
-          username: plm@phploginmanagement.co-id.id
+          server: ftpupload.net
+          username: if0_37679888
           password: ${{ secrets.PLM_FTP_PASSWORD }}
           local-dir: ./public/
-          server-dir: ./public_html/
+          server-dir: ./htdocs/
           exclude: |
             **/.git*
             **/.git*/**
