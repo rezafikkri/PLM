@@ -1,7 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/u3ltnvub/public_html/
-    - /bin/cp public/.htaccess $DEPLOYPATH
-    - /bin/cp public/index.php $DEPLOYPATH
-    - /bin/cp public/plm.css $DEPLOYPATH

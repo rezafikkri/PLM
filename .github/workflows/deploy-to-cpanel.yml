@@ -1,0 +1,27 @@
+name: Deploy to Cpanel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Package
+        uses: php-actions/composer@v6
+        with:
+          php_version: '8.2'
+          dev: no
+
+      - name:  See Dir
+        shell: bash
+        run: ls -R
