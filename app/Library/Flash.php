@@ -6,8 +6,8 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class Flash
 {
-    const string NAME = 'FLASH';
-    const string PATH = '/';
+    const NAME = 'FLASH';
+    const PATH = '/';
 
     private function getExpire(): int
     {
