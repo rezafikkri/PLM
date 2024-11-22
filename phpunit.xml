@@ -25,7 +25,7 @@
 </source>
 
 <php>
-  <env name="APP_ENV" value="development"/>
+  <env name="APP_ENV" value="testing"/>
   <env name="DB_DRIVER" value="pgsql"/>
   <env name="DB_HOST" value="localhost"/>
   <env name="DB_PORT" value="5432"/>

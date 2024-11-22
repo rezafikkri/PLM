@@ -11,7 +11,7 @@ class Redirect
     private function redirect(): void
     {
         header("Location: $this->path");
-        if ($_ENV['APP_ENV'] != 'development') {
+        if ($_ENV['APP_ENV'] != 'testing') {
             exit();
         }
     }

@@ -3,21 +3,20 @@
 namespace RezaFikkri\PLM\Controller;
 
 use RezaFikkri\PLM\App\View;
-use RezaFikkri\PLM\Config\Database;
-use RezaFikkri\PLM\Repository\SessionRepository;
-use RezaFikkri\PLM\Repository\UserRepository;
+// use RezaFikkri\PLM\Config\Database;
+// use RezaFikkri\PLM\Repository\SessionRepository;
+// use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Service\SessionService;
 
 class HomeController
 {
-    private SessionService $sessionService;
-
-    public function __construct()
-    {
-        $dbc = Database::getConnection();
-        $userRepository = new UserRepository($dbc);
-        $sessionRepository = new SessionRepository($dbc);
-        $this->sessionService = new SessionService($sessionRepository, $userRepository);
+    public function __construct(
+        private SessionService $sessionService,
+    ) {
+        // $dbc = Database::getConnection();
+        // $userRepository = new UserRepository($dbc);
+        // $sessionRepository = new SessionRepository($dbc);
+        // $this->sessionService = new SessionService($sessionRepository, $userRepository);
     }
 
     public function index(): void

@@ -12,26 +12,23 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Home Controller
-Router::add('GET', '/', HomeController::class, 'index');
+Router::add('GET', '/', [HomeController::class, 'index']);
 
 // User Controller
-Router::add('GET', '/users/register', UserController::class, 'register', [ MustNotLoginMiddleware::class ]);
-Router::add('POST', '/users/register', UserController::class, 'postRegister', [ MustNotLoginMiddleware::class ]);
-Router::add('GET', '/users/login', UserController::class, 'login', [ MustNotLoginMiddleware::class ]);
-Router::add('POST', '/users/login', UserController::class, 'postLogin', [ MustNotLoginMiddleware::class ]);
-Router::add('GET', '/users/logout', UserController::class, 'logout', [ MustLoginMiddleware::class ]);
-Router::add('GET', '/users/profile', UserController::class, 'updateProfile', [
-    MustLoginMiddleware::class,
-]);
-Router::add('POST', '/users/profile', UserController::class, 'postUpdateProfile', [
-    MustLoginMiddleware::class,
-]);
-Router::add('GET', '/users/password', UserController::class, 'updatePassword', [
-    MustLoginMiddleware::class,
-]);
-Router::add('POST', '/users/password', UserController::class, 'postUpdatePassword', [
-    MustLoginMiddleware::class,
-]);
+Router::group('users', [ MustNotLoginMiddleware::class ], function () {
+    Router::add('GET', '/register', [ UserController::class, 'register' ]);
+    Router::add('POST', '/register', [ UserController::class, 'postRegister' ]);
+    Router::add('GET', '/login', [ UserController::class, 'login' ]);
+    Router::add('POST', '/login', [ UserController::class, 'postLogin' ]);
+});
+
+Router::group('users', [ MustLoginMiddleware::class ], function () {
+    Router::add('GET', '/logout', [ UserController::class, 'logout' ]);
+    Router::add('GET', '/profile', [ UserController::class, 'updateProfile' ]);
+    Router::add('POST', '/profile', [ UserController::class, 'postUpdateProfile' ]);
+    Router::add('GET', '/password', [ UserController::class, 'updatePassword' ]);
+    Router::add('POST', '/password', [ UserController::class, 'postUpdatePassword' ]);
+});
 
 Router::run();
 

@@ -3,28 +3,28 @@
 namespace RezaFikkri\PLM\Controller;
 
 use RezaFikkri\PLM\App\View;
-use RezaFikkri\PLM\Config\Database;
+// use RezaFikkri\PLM\Config\Database;
 use RezaFikkri\PLM\Exception\ValidationException;
 use RezaFikkri\PLM\Model\UserLoginRequest;
 use RezaFikkri\PLM\Model\UserPasswordUpdateRequest;
 use RezaFikkri\PLM\Model\UserProfileUpdateRequest;
 use RezaFikkri\PLM\Model\UserRegisterRequest;
-use RezaFikkri\PLM\Repository\SessionRepository;
-use RezaFikkri\PLM\Repository\UserRepository;
+// use RezaFikkri\PLM\Repository\SessionRepository;
+// use RezaFikkri\PLM\Repository\UserRepository;
 use RezaFikkri\PLM\Service\SessionService;
 use RezaFikkri\PLM\Service\UserService;
 
 class UserController
 {
-    private UserService $userService;
-    private SessionService $sessionService;
 
-    public function __construct()
-    {
-        $userRepository = new UserRepository(Database::getConnection());
-        $this->userService = new UserService($userRepository);
-        $sessionRepository = new SessionRepository(Database::getConnection());
-        $this->sessionService = new SessionService($sessionRepository, $userRepository);
+    public function __construct(
+        private UserService $userService,
+        private SessionService $sessionService,
+    ) {
+        // $userRepository = new UserRepository(Database::getConnection());
+        // $this->userService = new UserService($userRepository);
+        // $sessionRepository = new SessionRepository(Database::getConnection());
+        // $this->sessionService = new SessionService($sessionRepository, $userRepository);
     }
 
     public function register(): void
