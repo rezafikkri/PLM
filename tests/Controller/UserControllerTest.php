@@ -4,6 +4,8 @@ namespace RezaFikkri\PLM\Controller;
 
 require_once __DIR__ . '/../helper.php';
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\{
@@ -24,12 +26,17 @@ class UserControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->controller = new UserController;
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+
+        $this->controller = $container->get(UserController::class);
         $this->flash = flash();
 
+
         // clear users
-        $this->sessionRepository = new SessionRepository(Database::getConnection());
-        $this->userRepository = new UserRepository(Database::getConnection());
+        $this->sessionRepository = $container->get(SessionRepository::class);
+        $this->userRepository = $container->get(UserRepository::class);
         $this->sessionRepository->deleteAll();
         $this->userRepository->deleteAll();
 
