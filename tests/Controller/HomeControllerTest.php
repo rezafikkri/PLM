@@ -2,6 +2,8 @@
 
 namespace RezaFikkri\PLM\Controller;
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -18,9 +20,13 @@ class HomeControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->controller = new HomeController;
-        $this->userRepository = new UserRepository(Database::getConnection());
-        $this->sessionRepository = new SessionRepository(Database::getConnection());
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+
+        $this->controller = $container->get(HomeController::class);
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->sessionRepository = $container->get(SessionRepository::class);
 
         $this->sessionRepository->deleteAll();
         $this->userRepository->deleteAll();
