@@ -2,6 +2,8 @@
 
 namespace RezaFikkri\PLM\Repository;
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -13,8 +15,11 @@ class UserRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->repository = new UserRepository(Database::getConnection());
-        $sessionRepository = new SessionRepository(Database::getConnection());
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+        $this->repository = $container->get(UserRepository::class);
+        $sessionRepository = $container->get(SessionRepository::class);
 
         $sessionRepository->deleteAll();
         $this->repository->deleteAll(); // clear all users before each test
