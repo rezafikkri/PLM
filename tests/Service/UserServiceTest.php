@@ -2,6 +2,8 @@
 
 namespace RezaFikkri\PLM\Service;
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -21,9 +23,12 @@ class UserServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userRepository = new UserRepository(Database::getConnection());
-        $sessionRepository = new SessionRepository(Database::getConnection());
-        $this->userService = new UserService($this->userRepository);
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+        $this->userRepository = $container->get(UserRepository::class);
+        $sessionRepository = $container->get(SessionRepository::class);
+        $this->userService = $container->get(UserService::class);
 
         $sessionRepository->deleteAll();
         $this->userRepository->deleteAll(); // clear all user from db before each test

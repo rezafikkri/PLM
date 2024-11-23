@@ -4,6 +4,8 @@ namespace RezaFikkri\PLM\Service;
 
 require_once __DIR__ . '/../helper.php';
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -21,10 +23,12 @@ class SessionServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $dbc = Database::getConnection();
-        $this->sessionRepository = new SessionRepository($dbc);
-        $this->userRepository = new UserRepository($dbc);
-        $this->sessionService = new SessionService($this->sessionRepository, $this->userRepository);
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+        $this->sessionRepository = $container->get(SessionRepository::class);
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->sessionService = $container->get(SessionService::class);
 
         $this->sessionRepository->deleteAll();// clear all session data before each test
         $this->userRepository->deleteAll();
