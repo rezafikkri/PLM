@@ -18,6 +18,11 @@ class Router
 
     private static array $routes = [];
 
+    public static function getRoutes(): array
+    {
+        return self::$routes;
+    }
+
     public static function add(
         string $httpMethod,
         string $path,
@@ -52,6 +57,11 @@ class Router
     {
         self::$prefix = '';
         self::$middlewares = [];
+    }
+
+    public static function clearRoutes(): void
+    {
+        self::$routes = [];
     }
 
     public static function run(): void
