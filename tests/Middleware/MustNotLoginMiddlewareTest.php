@@ -4,6 +4,8 @@ namespace RezaFikkri\PLM\Middleware;
 
 require_once __DIR__ . '/../helper.php';
 
+use DI\Container;
+use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RezaFikkri\PLM\Config\Database;
@@ -20,9 +22,12 @@ class MustNotLoginMiddlewareTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->middleware = new MustNotLoginMiddleware;
-        $this->userRepository = new UserRepository(Database::getConnection());
-        $this->sessionRepository = new SessionRepository(Database::getConnection());
+        $container = new Container([
+            PDO::class => Database::getConnection(),
+        ]);
+        $this->middleware = $container->get(MustNotLoginMiddleware::class);
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->sessionRepository = $container->get(SessionRepository::class);
 
         $_COOKIE = [];
         $this->sessionRepository->deleteAll();
